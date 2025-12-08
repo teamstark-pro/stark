@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathongo Dashboard | Stark</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CBVSGE70LX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CBVSGE70LX');
+    </script>
+</head>
+
+<body>
+    <div class="bg-fixed"></div>
+    <div class="overlay"></div>
+
+    <div id="navbar-container"></div>
+
+    <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 20px;">
+        <div class="container" style="max-width: 800px; width: 100%;">
+            
+            <div class="fade-in-up" style="text-align: center; margin-bottom: 50px;">
+                <h1 class="neon-text-blue" style="font-size: 3.5rem; margin-bottom: 10px;">Mathongo Series</h1>
+                <p style="color: rgba(255,255,255,0.7);">Select a category to begin practicing.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                
+                <a href="qft.html" class="glass-panel glowing" style="text-decoration: none; padding: 40px; text-align: center; border: 1px solid rgba(0, 136, 204, 0.3); transition: 0.3s;">
+                    <i class="fas fa-layer-group" style="font-size: 3rem; color: #0088cc; margin-bottom: 20px;"></i>
+                    <h2 style="color: white; margin-bottom: 10px;">QFT Series</h2>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        Quality Full Tests. <br>Full Syllabus Mock Series.
+                    </p>
+                    <span style="display: inline-block; margin-top: 20px; color: #0088cc; font-weight: bold;">
+                        Open Series <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+                </div>
+        </div>
+    </section>
+
+    <script src="assets/js/navbar.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
