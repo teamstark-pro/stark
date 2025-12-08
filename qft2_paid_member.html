@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JEE Main Mock Test - NTA Mobile Ready</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --nta-orange: #F5821F;
+            --nta-blue: #0A5F9E;
+            --nta-green: #28a745;
+            --nta-purple: #660066;
+            --header-bg: #fff;
+            --text-color: #333;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* --- HEADER --- */
+        header { background: #fff; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ccc; padding: 0 10px; z-index: 1010; position: relative; }
+        .logo-area { display: flex; align-items: center; gap: 8px; }
+        .logo-img { width: 40px; height: 40px; background: orange; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; }
+        .exam-title { color: var(--nta-blue); font-weight: bold; font-size: 1rem; display: none; } /* Hidden on small mobile */
+        .timer-box { background: #000; color: #fff; font-weight: bold; padding: 5px 8px; border-radius: 4px; font-size: 1rem; }
+        
+        /* Mobile Menu Toggle */
+        .hamburger { display: none; font-size: 24px; cursor: pointer; padding: 5px; color: var(--nta-blue); border: 1px solid #ccc; border-radius: 4px; }
+
+        /* --- SUB HEADER --- */
+        .sub-header { background: var(--nta-orange); display: flex; overflow-x: auto; padding: 0; height: 40px; align-items: flex-end; white-space: nowrap; }
+        .subject-tab {
+            flex: 1; text-align: center; padding: 10px; color: white; font-weight: bold; font-size: 0.9rem; border: none; background: none; opacity: 0.7; border-radius: 5px 5px 0 0;
+        }
+        .subject-tab.active { background: white; color: black; opacity: 1; border-bottom: 2px solid white; }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container { display: flex; flex: 1; position: relative; overflow: hidden; }
+
+        /* Question Panel */
+        .question-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; }
+        .q-header { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; align-items: center; background: #f9f9f9; }
+        .q-scroll-area { flex: 1; overflow-y: auto; padding: 15px; font-size: 1rem; line-height: 1.5; }
+        .q-image { max-width: 100%; height: auto; display: block; margin: 10px auto; border: 1px solid #ddd; }
+        
+        /* Options */
+        .option-row { display: flex; gap: 10px; padding: 8px; border: 1px solid transparent; border-radius: 4px; margin-bottom: 5px; cursor: pointer; }
+        .option-row:hover { background: #f0f8ff; }
+        .option-row input { margin-top: 4px; }
+        .int-input { padding: 8px; font-size: 1rem; border: 1px solid #ccc; width: 100px; border-radius: 4px; }
+
+        /* Footer Buttons */
+        .q-footer { padding: 8px; background: #fff; border-top: 1px solid #ccc; display: flex; flex-wrap: wrap; gap: 5px; justify-content: space-between; align-items: center; }
+        .btn { padding: 8px 12px; font-size: 0.8rem; font-weight: bold; border: 1px solid #ccc; border-radius: 2px; cursor: pointer; text-transform: uppercase; flex-grow: 1; text-align: center; }
+        .btn-green { background: var(--nta-green); color: white; border-color: var(--nta-green); }
+        .btn-blue { background: var(--nta-blue); color: white; border-color: var(--nta-blue); }
+        .btn-orange { background: #ffc107; color: black; }
+        .btn-submit { background: var(--nta-green); color: white; flex-grow: 0; min-width: 80px; }
+
+        /* --- SIDEBAR (Question Palette) --- */
+        .sidebar {
+            width: 300px; background: #EBF6FC; border-left: 1px solid #ccc; display: flex; flex-direction: column;
+            transition: transform 0.3s ease; z-index: 1005;
+        }
+        
+        /* Mobile Sidebar Styles */
+        @media (max-width: 768px) {
+            .exam-title { display: none; }
+            .hamburger { display: block; }
+            .sidebar {
+                position: absolute; top: 0; right: 0; bottom: 0; width: 85%;
+                transform: translateX(100%); box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .logo-area span { font-size: 0.9rem; }
+            .btn { font-size: 0.75rem; padding: 10px 5px; }
+        }
+
+        .sidebar-header { padding: 10px; background: #eee; border-bottom: 1px solid #ccc; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 10px; overflow-y: auto; flex: 1; align-content: start; }
+        .p-btn {
+            height: 35px; border: 1px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem; position: relative;
+        }
+        .p-btn.visited { background: #dc3545; color: white; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); }
+        .p-btn.answered { background: var(--nta-green); color: white; border-radius: 50%; }
+        .p-btn.marked { background: var(--nta-purple); color: white; border-radius: 50%; }
+        .p-btn.marked-ans { background: var(--nta-purple); color: white; border-radius: 50%; }
+        .p-btn.marked-ans::after { content: '✓'; position: absolute; bottom: 0; right: 0; color: #0f0; font-size: 10px; font-weight: bold; background: white; border-radius: 50%; padding: 0 2px; }
+        .p-btn.current { border: 2px solid black; }
+
+        /* Legend */
+        .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px; font-size: 0.75rem; background: #fff; border-bottom: 1px solid #ccc; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .l-box { width: 20px; height: 20px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; }
+
+        /* ANALYSIS PAGE */
+        .analysis-page { display: none; padding: 20px; overflow-y: auto; height: 100%; background: #f5f5f5; }
+        .score-card { background: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .analysis-item { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #eee; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .badge-correct { background: #d4edda; color: #155724; }
+        .badge-wrong { background: #f8d7da; color: #721c24; }
+        .badge-skip { background: #fff3cd; color: #856404; }
+
+    </style>
+</head>
+<body>
+
+<div id="examView" style="display:flex; flex-direction:column; height:100%;">
+    <header>
+        <div class="logo-area">
+            <div class="logo-img">NTA</div>
+            <div style="display:flex; flex-direction:column;">
+                <span style="font-weight:bold; color:var(--nta-orange);">JEE MAIN</span>
+                <span style="font-size:0.7rem; color:#666;">Mock Test</span>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div class="timer-box" id="timer">03:00:00</div>
+            <div class="hamburger" onclick="toggleSidebar()">☰</div>
+        </div>
+    </header>
+
+    <div class="sub-header">
+        <button class="subject-tab active" onclick="switchSubject('Mathematics')">MATHS</button>
+        <button class="subject-tab" onclick="switchSubject('Physics')">PHYSICS</button>
+        <button class="subject-tab" onclick="switchSubject('Chemistry')">CHEMISTRY</button>
+    </div>
+
+    <div class="main-container">
+        <div class="question-panel" onclick="closeSidebar()">
+            <div class="q-header">
+                <span id="qHeader">Question 1</span>
+                <span style="font-size:0.8rem; color:#666;">+4 / -1</span>
+            </div>
+            <div class="q-scroll-area" id="qContent">
+                </div>
+            <div class="q-footer">
+                <button class="btn btn-green" onclick="saveNext()">SAVE & NEXT</button>
+                <button class="btn btn-orange" onclick="saveMark()">SAVE & MARK</button>
+                <button class="btn" onclick="clearResp()">CLEAR</button>
+                <button class="btn btn-blue" onclick="markNext()">MARK & NEXT</button>
+                <div style="width:100%; height:5px;"></div> <button class="btn" style="background:#eee;" onclick="prevQ()">&lt;&lt; BACK</button>
+                <button class="btn" style="background:#eee;" onclick="nextQ()">NEXT &gt;&gt;</button>
+                <button class="btn btn-submit" onclick="submitExam()">SUBMIT</button>
+            </div>
+        </div>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div style="width:30px; height:30px; background:#ddd; border-radius:50%;"></div>
+                <span>Candidate Name</span>
+                <span style="margin-left:auto; cursor:pointer;" onclick="toggleSidebar()">✕</span>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="l-box" style="background:#28a745; border-radius:50%"></div> Answered</div>
+                <div class="legend-item"><div class="l-box" style="background:#dc3545; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);"></div> Not Ans</div>
+                <div class="legend-item"><div class="l-box" style="background:#fff; color:black;"></div> Not Visit</div>
+                <div class="legend-item"><div class="l-box" style="background:#660066; border-radius:50%"></div> Marked</div>
+            </div>
+            <div class="palette-grid" id="palette">
+                </div>
+        </div>
+    </div>
+</div>
+
+<div id="analysisView" class="analysis-page">
+    <div class="score-card">
+        <h2>Result Overview</h2>
+        <h1 id="finalScore" style="color:var(--nta-blue); font-size:3rem; margin:10px 0;">0 / 300</h1>
+        <p id="timeTaken">Time Taken: 00:00:00</p>
+        <button class="btn btn-blue" onclick="location.reload()">RETAKE TEST</button>
+    </div>
+    
+    <div style="margin-bottom:20px; text-align:center;">
+        <button class="btn" onclick="renderAnalysis('Mathematics')">MATHS</button>
+        <button class="btn" onclick="renderAnalysis('Physics')">PHYSICS</button>
+        <button class="btn" onclick="renderAnalysis('Chemistry')">CHEMISTRY</button>
+    </div>
+
+    <div id="analysisList"></div>
+</div>
+
+<script>
+    // --- DATA ---
+    // Q1-25 Math, Q26-50 Phys, Q51-75 Chem
+    // Integer types: 21-25, 46-50, 71-75
+    const questions = [
+        // === MATHEMATICS (Verbatim from Page 76 down) ===
+        { id: 1, sub: "Mathematics", type: "MCQ", q: "In a \\(\\triangle ABC\\) the equations of right bisectors of sides AB and CA are \\(3x+4y=20\\) and \\(8x+6y=65\\) respectively. If the vertex A be \\((10,10)\\) then the value of (Area of \\(\\triangle ABC\\))/7 is", opts: ["3", "6", "8", "4"], ans: 1 },
+        { id: 2, sub: "Mathematics", type: "MCQ", q: "In an arithmetic series containing 2p terms, the total of the terms at odd places is 20. The total of the terms at even places is 24. If the difference between the last term and the first term of the series is 7, find the integer value of p.", opts: ["4", "3", "5", "6"], ans: 0 },
+        { id: 3, sub: "Mathematics", type: "MCQ", q: "The number of solution(s) of the equation \\(z^{2}-z-|z|^{2}-\\frac{64}{|z|^{5}}=0\\) is", opts: ["3", "0", "2", "1"], ans: 3 },
+        { id: 4, sub: "Mathematics", type: "MCQ", q: "Let \\(\\vec{a}=\\hat{i}+\\hat{j}\\) and \\(\\vec{b}=2\\hat{i}-\\hat{k}\\). The point of intersection of the lines \\(\\vec{r}\\times\\vec{a}=\\vec{b}\\times\\vec{a}\\) and \\(\\vec{r}\\times\\vec{b}=\\vec{a}\\times\\vec{b}\\) is:", opts: ["\\(\\hat{i}+\\hat{j}-3\\hat{k}\\)", "\\(3\\hat{i}+\\hat{j}+\\hat{k}\\)", "\\(3\\hat{i}+\\hat{j}-\\hat{k}\\)", "None of these"], ans: 2 },
+        { id: 5, sub: "Mathematics", type: "MCQ", q: "If the line \\(y-\\sqrt{3}x+3=0\\) cuts the parabola \\(y^2=x+2\\) at A and B, if \\(PA \\cdot PB = k\\frac{(\\sqrt{3}+2)}{3}\\) [where P is \\((\\sqrt{3},0)\\)] then \\(k=\\)", opts: ["1", "3", "2", "4"], ans: 3, img: "pics/q5.png" },
+        { id: 6, sub: "Mathematics", type: "MCQ", q: "Suppose \\(f(x)\\) and \\(g(x)\\) are differentiable function such that \\(f'(g(x)).g'(x) = f(g(x)).g(f(x))f'(x)\\) and \\(f(x) \\& g(x)\\) are positive for all \\(x\\in R\\). Also \\(\\int_{0}^{x}f(g(t))dt=\\frac{1}{2}(1-e^{-2x})\\forall x\\in R, g(f(0))=1\\) and \\(h(x)=\\frac{g(f(x))}{f(g(x))}\\forall x\\in R.\\) If the graph of \\(y=h(x)\\) is symmetric with respect to the line \\(x=\\lambda,\\) then \\(\\lambda\\) equals....", opts: ["2.5", "2", "1.5", "1"], ans: 3 },
+        { id: 7, sub: "Mathematics", type: "MCQ", q: "The number of integers k for which equation \\(x^{3}-27x+k=0\\) has atleast two distinct integral roots is", opts: ["1", "3", "2", "4"], ans: 1 },
+        { id: 8, sub: "Mathematics", type: "MCQ", q: "The line \\(y=mx\\) bisects the area enclosed by the lines \\(x=0,y=0,x=\\frac{3}{2}\\) and the curve \\(y=1+4x-x^{2},\\) then m is equal to", opts: ["\\(-\\frac{13}{6}\\)", "\\(\\frac{12}{7}\\)", "\\(\\frac{13}{6}\\)", "\\(-\\frac{12}{7}\\)"], ans: 2 },
+        { id: 9, sub: "Mathematics", type: "MCQ", q: "The solution of the differential equation \\(y^{2}dx+(x^{2}-xy+y^{2})dy=0\\), is :", opts: ["\\(tan^{-1}(\\frac{x}{y})+ln~y+C=0\\)", "\\(2tan^{-1}(\\frac{x}{y})+ln~y+C=0\\)", "\\(ln(y+\\sqrt{x^{2}+y^{2}})+ln~y+C=0\\)", "\\(ln(y+\\sqrt{x^{2}+y^{2}})+C=0\\)"], ans: 0 },
+        { id: 10, sub: "Mathematics", type: "MCQ", q: "The foot of perpendicular of the point \\((2,0,5)\\) on the line \\(\\frac{x+1}{2}=\\frac{y-1}{5}=\\frac{z+1}{-1}\\) is \\((\\alpha,\\beta,\\gamma)\\). Then which of the following is NOT correct", opts: ["\\(\\frac{\\gamma}{\\alpha}=\\frac{5}{8}\\)", "\\(\\frac{\\alpha\\beta}{\\gamma}=\\frac{4}{15}\\)", "\\(\\frac{\\beta}{\\gamma}=-5\\)", "\\(\\frac{\\alpha}{\\beta}=-8\\)"], ans: 2 },
+        { id: 11, sub: "Mathematics", type: "MCQ", q: "A 12 digit number starts with 2 and all its digits are prime, then the probability that the sum of any two consecutive digits of the number is prime is \\(\\frac{1}{2^{k}}\\) where k is equal to", opts: ["18", "14", "16", "12"], ans: 1 },
+        { id: 12, sub: "Mathematics", type: "MCQ", q: "If \\([x]\\) denotes the integral part of \\(x,\\) then the domain of the function \\(f(x)=sin^{-1}[2x^{2}-3]+log_{2}\\{log_{\\frac{1}{2}}(x^{2}-5x+5)\\} \\) is....", opts: ["\\((-\\sqrt{\\frac{5}{2}},-1]\\)", "\\([1,\\sqrt{\\frac{5}{2}})\\)", "\\((-\\sqrt{\\frac{5}{2}},-1]\\cup[1,\\sqrt{\\frac{5}{2}})\\)", "\\((1,\\frac{5-\\sqrt{5}}{2})\\)"], ans: 3 },
+        { id: 13, sub: "Mathematics", type: "MCQ", q: "Consider the system of equations: \\(xsin\\theta-2ycos\\theta-az=0, x+2y+z=0\\) and \\(-x+y+z=0, \\theta\\in R.\\)", opts: ["The given system will have infinite solutions for \\(a=2\\)", "The number of integer values of a is 3 for the system to have non-trivial solutions.", "For \\(a=1,\\) there exists \\(\\theta\\) for which the system will have unique solution.", "For \\(a=3,\\) there exists \\(\\theta\\) for which the system will have infinite solutions."], ans: 3 },
+        { id: 14, sub: "Mathematics", type: "MCQ", q: "If the two circles \\((x-1)^{2}+(y-3)^{2}=r^{2}(r>0)\\) and \\(x^{2}+y^{2}-8x+2y+8=0\\) intersect in two distinct points, then the number of odd positive integral values of r is", opts: ["2", "4", "3", "5"], ans: 0 },
+        { id: 15, sub: "Mathematics", type: "MCQ", q: "Maximum length of chord of the ellipse \\(\\frac{x^{2}}{8}+\\frac{y^{2}}{4}=1,\\) such that eccentric angles of its extremities differ by \\(\\frac{\\pi}{2}\\) is", opts: ["2.5", "6", "3", "4"], ans: 3 },
+        { id: 16, sub: "Mathematics", type: "MCQ", q: "Let the mean and the variance of 5 observations \\(x_{1},x_{2},x_{3},x_{4},x_{5}\\) be \\(\\frac{24}{5}\\) and \\(\\frac{194}{25}\\) respectively. If the mean and variance of the first 4 observations are \\(\\frac{7}{2}\\) and a respectively, then \\((4a+x_{5})\\) is equal to:", opts: ["13", "17", "15", "18"], ans: 2 },
+        { id: 17, sub: "Mathematics", type: "MCQ", q: "If \\(A^{-1}=[\\begin{matrix}sin^{2}\\alpha&0&0\\\\ 0&sin^{2}\\beta&0\\\\ 0&0&sin^{2}\\gamma\\end{matrix}]\\) and \\(B^{-1}=[\\begin{matrix}cos^{2}\\alpha&0&0\\\\ 0&cos^{2}\\beta&0\\\\ 0&0&cos^{2}\\gamma\\end{matrix}]\\) where \\(\\alpha,\\beta,\\gamma\\in R\\) and \\(C=A^{-5}+B^{-5}+5~A^{-1}B^{-1}(A^{-3}+B^{-3})+10~A^{-2}B^{-2}(A^{-1}+B^{-1})\\) then C =", opts: ["32I", "5I", "I", "\\(2(A^{-1}+B^{-1})^{2}\\)"], ans: 0 },
+        { id: 18, sub: "Mathematics", type: "MCQ", q: "Let \\(\\vec{a}=5\\vec{p}+2\\vec{q}\\) and \\(\\vec{b}=\\vec{p}-3\\vec{q}\\) be the adjacent sides of a parallelogram. If \\(|\\vec{p}|=2\\sqrt{2},|\\vec{q}|=3\\) and angle between \\(\\vec{p}\\) and \\(\\vec{q}\\) is \\(\\frac{\\pi}{4}\\) then the length of smaller diagonal of parallelogram is", opts: ["8", "15", "\\(\\sqrt{617}\\)", "\\(\\sqrt{593}\\)"], ans: 3 },
+        { id: 19, sub: "Mathematics", type: "MCQ", q: "The product \\(\\prod_{k=1}^{45}cosec^{2}(2k-1)^{\\circ}=m^{n}\\) (where \\(m,n\\) are coprime numbers), then the value of 'n - m' is", opts: ["59", "68", "87", "46"], ans: 1 },
+        { id: 20, sub: "Mathematics", type: "MCQ", q: "The value of \\(lim_{x\\rightarrow\\infty}\\frac{x^{n}+nx^{n-1}+1}{e^{[x]}}\\), \\(n\\in I\\) is (where [.] denotes greatest integer function)", opts: ["1", "n", "zero", "\\(n(n-1)\\)"], ans: 2 },
+        { id: 21, sub: "Mathematics", type: "INT", q: "Consider equations of two lines \\(L_{1}\\) and \\(L_{2}\\) as \\(L_{1}:\\vec{r}=(\\hat{i}+\\hat{j})+\\lambda(\\hat{i}+2\\hat{j}+3\\hat{k}),\\lambda\\in R\\) and \\(L_{2}:\\vec{r}=(-\\hat{i}-2\\hat{j}+\\hat{k})+\\mu(-\\hat{i}+2\\hat{j}-2\\hat{k}),\\mu\\in R\\). If the shortest distance between \\(L_{1}\\) and \\(L_{2}\\) is 'd' then the value of \\(\\sqrt{13}d\\) is:", ans: "4" },
+        { id: 22, sub: "Mathematics", type: "INT", q: "The number of integral value(s) of x where, \\(f(x)=\\begin{cases}[|x|]+|[x]| & -1<x\\le 4\\\\ |x^{2}+2x| & -4\\le x\\le-1\\end{cases}\\) is differentiable in (-4, 4) is(are)", ans: "1" },
+        { id: 23, sub: "Mathematics", type: "INT", q: "Let \\(\\lambda=\\int_{1}^{9}(\\frac{1}{2}+\\sqrt{\\frac{1}{4}+log_{3}x})dx+\\int_{1}^{2}\\frac{3^{x}- [x]}{3^{\\{x\\}}}dx\\) then \\(\\lambda\\) equals (where [.] denotes greatest integer function and {.} denotes fractional part function)", ans: "0" },
+        { id: 24, sub: "Mathematics", type: "INT", q: "The number of rational terms in the expansion of \\((\\sqrt{2}+\\sqrt{3}+\\sqrt{5})^{12}\\) is \\(\\lambda\\) then value of \\(\\lambda\\) is equal to", ans: "0" },
+        { id: 25, sub: "Mathematics", type: "INT", q: "If \\(x^{2}+2x+3=0\\) has roots \\(\\alpha \\& \\beta\\) and \\(P_{n}=\\alpha^{n}-\\beta^{n}\\) then value of \\(|\\frac{P_{5}+9P_{1}}{P_{3}}|\\) is equal to----", ans: "0" },
+
+        // === PHYSICS (Verbatim from Page 51 to 27) ===
+        { id: 26, sub: "Physics", type: "MCQ", q: "Identify the correct dimensional representation for each physical quantity listed below. Match List-l with List-II.<br>List-I (Physical Quantity)<br>(A) Gravitational Constant (G)<br>(B) Magnetic Field (B)<br>(C) Electric Field (E)<br>(D) Electric Potential (V)<br>List-II (Dimensional Formula)<br>(I) \\([ML^{2}T^{-3}A^{-1}]\\)<br>(II) \\([M^{-1}L^{3}T^{-2}]\\)<br>(III) \\([MLT^{-3}A^{-1}]\\)<br>(IV) \\([MT^{-2}A^{-1}]\\)", opts: ["(A)-(II),(B)-(IV),(C)-(III),(D)-(I)", "(A)-(IV),(B)-(I),(C)-(II),(D)-(III)", "(A)-(I),(B)-(III),(C)-(II),(D)-(IV)", "(A)-(III),(B)-(II),(C)-(IV),(D)-(I)"], ans: 2 },
+        { id: 27, sub: "Physics", type: "MCQ", q: "Two identical ideal springs of spring constant \\(1000~N/m\\) are connected by an ideal pulley as shown and system is arranged in vertical plane. At equilibrium \\(\\theta\\) is \\(60^{\\circ}\\) and masses \\(m_{1}\\) and \\(m_{2}\\) are 2 kg and 3 kg respectively. The elongation in each spring when \\(\\theta\\) is \\(60^{\\circ}\\) is p cm. The value of \\(\\frac{\\sqrt{3}p}{1.6}\\) is:", img: "pics/q27.png", opts: ["1", "2", "3", "5"], ans: 3 },
+        { id: 28, sub: "Physics", type: "MCQ", q: "To get maximum current in a resistance of 3 ohms, one can use n rows of m cells (connected in series) connected in parallel. If the total number of cells is 24 and the internal resistance of a cell is 0.5 ohms then....", opts: ["\\(m=12,n=2\\)", "\\(m=2,n=12\\)", "\\(m=8,n=3\\)", "\\(m=6,n=4\\)"], ans: 0 },
+        { id: 29, sub: "Physics", type: "MCQ", q: "Two wires of equal length and cross-section are suspended as shown. Their Young's modulii are \\(Y_{1}\\) and \\(Y_{2}\\) respectively. The equivalent Young's modulus will be", img: "pics/q29.png", opts: ["\\(Y_{1}+Y_{2}\\)", "\\(\\frac{Y_{1}+Y_{2}}{2}\\)", "\\(\\frac{Y_{1}Y_{2}}{Y_{1}+Y_{2}}\\)", "\\(\\frac{Y_{1}Y_{2}}{2(Y_{1}+Y_{2})}\\)"], ans: 1 },
+        { id: 30, sub: "Physics", type: "MCQ", q: "When a surface is illuminated with light of wavelength \\(\\lambda\\), the stopping potential is V. When the same surface is illuminated by light of wavelength \\(2\\lambda\\), the stopping potential is \\(\\frac{V}{3}.\\) Threshold wavelength for the metallic surface is", opts: ["\\(\\frac{4\\lambda}{3}\\)", "\\(4\\lambda\\)", "\\(6\\lambda\\)", "\\(\\frac{8\\lambda}{3}\\)"], ans: 1 },
+        { id: 31, sub: "Physics", type: "MCQ", q: "Considering the Bohr model for hydrogen-like species, the energy of an electron in a particular stationary state is directly proportional to \\(Z^{2}/n^{2}\\), where Z is the atomic number and n is the principal quantum number. Which of the following pairs of species and their respective states possess the same electronic energy?", opts: ["Hydrogen atom in its ground state and \\(Li^{2+}\\) ion in its first excited state.", "\\(Li^{2+}\\) ion in its second excited state and \\(He^{+}\\) ion in its ground state.", "\\(He^{+}\\) ion in its ground state and \\(Be^{3+}\\) ion in its first excited state.", "\\(Be^{3+}\\) ion in its ground state and hydrogen atom in its first excited state."], ans: 0 },
+        { id: 32, sub: "Physics", type: "MCQ", q: "Two blocks of mass 2 kg and 1 kg are connected by an ideal spring on a rough surface. The spring in unstreched. Spring constant is \\(8~N/m\\) Coefficient of friction is \\(\\mu=0.8\\) Now block 2 kg is imparted a velocity u towards 1 kg block. Find the maximum value of velocity 'u' of block 2 kg such that block of 1 kg mass never move is", img: "pics/q32.png", opts: ["\\(\\sqrt{10}m/s\\)", "\\(\\sqrt{20}m/s\\)", "\\(\\sqrt{15}m/s\\)", "\\(\\sqrt{30}m/s\\)"], ans: 1 },
+        { id: 33, sub: "Physics", type: "MCQ", q: "Consider the following types of electromagnetic radiation:<br>(P) Radio waves<br>(Q) Visible light<br>(R) Gamma rays<br>(S) X-rays<br>Arrange these radiations in the increasing order of their wavelength. Choose the correct sequence from the options given below:", opts: ["\\(\\lambda_{R}<\\lambda_{S}<\\lambda_{Q}<\\lambda_{P}\\)", "\\(\\lambda_{R}<\\lambda_{Q}<\\lambda_{S}<\\lambda_{P}\\)", "\\(\\lambda_{P}<\\lambda_{Q}<\\lambda_{S}<\\lambda_{R}\\)", "\\(\\lambda_{S}<\\lambda_{Q}<\\lambda_{P}<\\lambda_{R}\\)"], ans: 0 },
+        { id: 34, sub: "Physics", type: "MCQ", q: "A rectangular loop of sides 10 cm and 5 cm, carrying a current I of 12 A, is placed in different orientations as shown in the figure below. If there is a uniform magnetic field of 0.3 T in the positive z direction, in which orientations the loop would be in (i) stable equilibrium and (ii) unstable equilibrium?", img: "pics/q34.png", opts: ["(b) and (d)", "(a) and (b)", "(b) and (c)", "(c) and (d)"], ans: 0 },
+        { id: 35, sub: "Physics", type: "MCQ", q: "In YDSE experiment with a white light with a plane wavefront, the light reaching the screen at position \\(y=1\\) mm (distance from central maxima on the screen) is passed through a prism and its spectrum is obtained. Find the missing lines in the visible region of this spectrum. [Given \\(D=1~m,\\) d = 0.9 mm, where symbol has usual meanings]", opts: ["600 nm", "750 nm", "700 nm", "560 nm"], ans: 0 },
+        { id: 36, sub: "Physics", type: "MCQ", q: "A transformer of efficiency 90% draws an input power of 4 kW. An electrical appliance connected across the secondary draws a current of 6 A. The load resistance is:", opts: ["600", "80\\(\\Omega\\)", "500", "100\\(\\Omega\\)"], ans: 3 },
+        { id: 37, sub: "Physics", type: "MCQ", q: "An object of mass m lying at rest at depth of 'R/2' from the Earth's surface, is to be made an Earth's satellite at a height of 'R/2' from the Earth's surface. The work required to do this is... (M-mass of the Earth, R-radius of the Earth and neglect the rotation of earth.)", opts: ["\\(\\frac{GMm}{R}\\)", "\\(\\frac{17GMm}{24R}\\)", "\\(\\frac{25GMm}{24R}\\)", "\\(\\frac{15GMm}{2R}\\)"], ans: 2 },
+        { id: 38, sub: "Physics", type: "MCQ", q: "A torch bulb rated at 4.5 W, 1.5 V is connected as shown in the figure. To make the bulb glow at full intensity, what should be the emf (in volt) of the cell?", img: "pics/q38.png", opts: ["8", "9", "6", "6.5"], ans: 0 },
+        { id: 39, sub: "Physics", type: "MCQ", q: "For the zener diode circuit shown, the current through the zener in mA is I. Find I", img: "pics/q39.png", opts: ["58 mA", "69 mA", "63 mA", "71 mA"], ans: 1 },
+        { id: 40, sub: "Physics", type: "MCQ", q: "Three moles of an inert monoatomic gas is mixed with two moles of a diatomic gas and the mixture is heated by a process \\(V=\\frac{k}{\\sqrt{T}}\\) Where V and T are volume and temeprature of the mixture and k is a constant. The molar heat capacity of this process for this mixture is?", opts: ["\\(\\frac{7R}{5}\\)", "\\(\\frac{11R}{5}\\)", "\\(\\frac{9R}{5}\\)", "none of these"], ans: 1 },
+        { id: 41, sub: "Physics", type: "MCQ", q: "Two point electric dipoles with dipole moments ' \\(P_{1}\\) ' and ' \\(P_{2}\\) ' are separated by a distance 'r' with their dipole axes mutually perpendicular as shown. The force of interaction between the dipoles is (where,\\(k=\\frac{1}{4\\pi\\epsilon_{0}}\\))", img: "pics/q41.png", opts: ["\\(\\frac{2kP_{1}P_{2}}{r^{4}}\\)", "\\(\\frac{4kP_{1}P_{2}}{r^{4}}\\)", "\\(\\frac{3kP_{1}P_{2}}{r^{4}}\\)", "\\(\\frac{6kP_{1}P_{2}}{r^{4}}\\)",], ans: 2 },
+        { id: 42, sub: "Physics", type: "MCQ", q: "In the figure as shown, a triangular portion is cut from a circular disc of radius R. The distance of centre of mass of the remainder from the centre of the disc is:", img: "pics/q42.png", opts: ["\\(\\frac{R}{3(4\\pi-1)}\\)", "\\(\\frac{2R}{3(4\\pi-1)}\\)", "\\(\\frac{R}{4(3\\pi-1)}\\)", "\\(\\frac{3R}{4(3\\pi-1)}\\)",], ans: 0 },
+        { id: 43, sub: "Physics", type: "MCQ", q: "A particle A is projected from the ground with an initial velocity of \\(10~ms^{-1}\\) at an angle of \\(60^{\\circ}\\) with horizontal. From what height h should an another particle B be projected horizontally with velocity \\(5~ms^{-1}\\) so that both the particles collide in ground at point C if both are projected simultaneously? \\((g=10ms^{-2})\\)", img: "pics/q43.png", opts: ["5 m", "10 m", "15 m", "25 m"], ans: 2 },
+        { id: 44, sub: "Physics", type: "MCQ", q: "For two gases A & B, \\(\\frac{T_{A}}{M_{A}}=4\\frac{T_{B}}{M_{B}}\\). Here T is the temperature and M is molecular mass. If \\(V_{RMS}\\) is the root-mean-square speed then \\(\\frac{(V_{RMS})_{A}}{(V_{RMS})_{B}}\\)", opts: ["2", "1", "4", "0.5"], ans: 0 },
+        { id: 45, sub: "Physics", type: "MCQ", q: "An alternating voltage of 520 volt and \\(\\omega=100\\) radian/second, is applied in an LCR series circuit where \\(L=0.01H, C=4\\times10^{-4}F\\) and \\(R=10\\Omega\\) Find the power supplied by the source in KW.", opts: ["1.5", "4", "2.5", "2"], ans: 3 },
+        { id: 46, sub: "Physics", type: "INT", q: "An equiconvex lens having \\(\\mu=1.5\\) and radius of curvature 10 cm is cut into four equal parts as shown in the diagram. Now two parts are used to form the image as shown in the diagram. Now consider O as origin (0,0) if x and y co-ordinate of image is (n cm, m cm) then value of \\((n\\times m)\\) is", img: "pics/q46.png", ans: "0" },
+        { id: 47, sub: "Physics", type: "INT", q: "A bird flies for 4 sec with a velocity \\(v=|t-2|ms^{-1}\\) along a straight line where t is time in seconds. The distance travelled by the bird is 'p' meters. Find 'p'?", ans: "0" },
+        { id: 48, sub: "Physics", type: "INT", q: "The moment of inertia of a uniform thin rod of mass m and length L about two axis PQ and RS passing through centre of rod C and in the plane of the rod are \\(I_{PQ}\\) and \\(I_{RS}\\) respectively. Then \\(I_{PQ}+I_{RS}=\\frac{mL^{2}}{3x}\\) The value of x is", img: "pics/q48.png", ans: "0" },
+        { id: 49, sub: "Physics", type: "INT", q: "Two organ pipes A and B are arranged as shown in figure. A small sound source kept in between the pipes excites both the pipes at their respective second lowest resonant frequencies. If \\(L_{A}=1.5\\) m. Find length of the pipe \\(B(L_{B})\\) in metre. (Neglect end Correction)", img: "pics/q49.png", ans: "0" },
+        { id: 50, sub: "Physics", type: "INT", q: "Magnetic flux linked with a stationary loop of resistance \\(4\\Omega\\) varies with respect to time during the time period 2 second, as \\(\\phi=3t(2-t)\\) the amount of heat generated (in joules) during that time is....", ans: "0" },
+
+        // === CHEMISTRY (Verbatim from Page 26 to 1) ===
+        { id: 51, sub: "Chemistry", type: "MCQ", q: "When \\(BaCl_{2}\\) is added to an aqueous salt solution, a white precipitate is obtained. How many anion among \\(CO_{3}^{2-}\\), \\(SO_{3}^{2-}\\) and \\(SO_{4}^{2-}\\) can be present in the solution", opts: ["\\(CO_{3}^{2-}\\) & \\(SO_{3}^{2-}\\) Only", "\\(CO_{3}^{2-}\\) & \\(SO_{4}^{2-}\\) Only", "\\(SO_{3}^{2-}\\) & \\(SO_{4}^{2-}\\) Only", "\\(CO_{3}^{2-}, SO_{3}^{2-}\\) & \\(SO_{4}^{2-}\\)"], ans: 3 },
+        { id: 52, sub: "Chemistry", type: "MCQ", q: "Which of the following conversion is known as Stefen's reduction?", optsImg: ["pics/q52_a.png", "pics/q52_b.png", "pics/q52_c.png", "pics/q52_d.png"], ans: 1 },
+        { id: 53, sub: "Chemistry", type: "MCQ", q: "Fructose reduces Tollen's reagent due to---", opts: ["Presence of ketonic group", "Presence of \\(NH_{4}\\) in Tollen's reagent", "Rearrangement of fructose into a mixture of glucose, fructose and mannose", "Both (2) & (3)"], ans: 2 },
+        { id: 54, sub: "Chemistry", type: "MCQ", q: "Consider the following conversions:<br>(i) \\(O_{(g)}+e^{-}\\rightarrow{O^{-}}_{(g)},\\Delta H_{1}\\)<br>(ii) \\(F_{(g)}+e^{-}\\rightarrow F^{-}(g),\\Delta H_{2}\\)<br>(iii) \\(Cl_{(g)}+e^{-}\\rightarrow Cl^{-}_{(g)},\\Delta H_{3}\\)<br>(iv) \\(O^{-}_{(g)}+e^{-}\\rightarrow{O^{2-}}_{(g)},\\Delta H_{4}\\)<br>That according to given information the incorrect statements is:", opts: ["\\(\\Delta H_{3}\\) is more negative than \\(\\Delta H_{1}\\) and \\(\\Delta H_{2}\\)", "\\(\\Delta H_{1},\\Delta H_{2}\\) and \\(\\Delta H_{3}\\) are negative whereas \\(\\Delta H_{4}\\) is positive", "\\(\\Delta H_{1}\\) is less negative than \\(\\Delta H_{2}\\)", "\\(\\Delta H_{1}\\) and \\(\\Delta H_{3}\\) are negative whereas \\(\\Delta H_{2}\\) and \\(\\Delta H_{4}\\) are positive"], ans: 3 },
+        { id: 55, sub: "Chemistry", type: "MCQ", q: "List I (Compound) vs List II (Statements).", img: "pics/q55.png", opts: ["2 1 3 4", "3 2 4 1", "2 3 4 1", "2 3 1 4"], ans: 0 },
+        { id: 56, sub: "Chemistry", type: "MCQ", q: "Given below are two statements: one is labeled as Assertion A and the other is labeled as Reason R:<br>Assertion A: Size of \\(Bk^{3+}\\) ion is less than \\(Np^{3+}\\) ion.<br>Reason R: the above is a consequence of the lanthanoid contraction.<br>In the light of the above statements, choose the correct answer from the option given below:", opts: ["A is false but R is true", "A is true but R is false", "Both A and R are true but R is not the correct explanation of A", "Both A and R are true and R is the correct explanation of A"], ans: 1 },
+        { id: 57, sub: "Chemistry", type: "MCQ", q: "At \\(25^{\\circ}C,\\) the solubility product of \\(Mg(OH)_{2}\\) is \\(1.0\\times10^{-11}.\\) At which pH, will \\(Mg^{2+}\\) ions start precipitating in the form of \\(Mg(OH)_{2}\\) from a solution of 0.001M \\(Mg^{2+}\\) ions?", opts: ["9", "11", "10", "8"], ans: 2 },
+        { id: 58, sub: "Chemistry", type: "MCQ", q: "Find out the possible Number of electrons having \\(l+m\\) value equal to zero in Cr.", opts: ["15", "8", "12", "10"], ans: 2 },
+        { id: 59, sub: "Chemistry", type: "MCQ", q: "Among the complexes of Ni listed below, the following is the only correct statement<br>I=\\([Ni(CO)_{4}]\\)<br>II=\\([Ni(CN)_{4}]^{-2}\\)<br>III=\\([Ni(Cl_{4})]^{-2}\\)", opts: ["All of them have tetrahedral geomretry", "I and III are tetrahedral and II has square planar geometry", "I and II are tetrahedral and III is square planar", "All of them have square planar geometry"], ans: 1 },
+        { id: 60, sub: "Chemistry", type: "MCQ", q: "Which one of the following structures has the IUPAC name 3-ethynyl-2-hydroxy-4-methylhex-3-en-5-ynoic acid?", optsImg: ["pics/q60_a.png", "pics/q60_b.png", "pics/q60_c.png", "pics/q60_d.png"], ans: 3 },
+        { id: 61, sub: "Chemistry", type: "MCQ", q: "According to molecular orbital theory, which of the following diatomic species are paramagnetic?<br>(1) \\(B_{2}\\)<br>(II) \\(C_{2}\\)<br>(III) \\(N_{2}^{+}\\)<br>(IV) \\(O_{2}^{-}\\)<br>(V) NO", opts: ["(I), (II) and (III) only", "(II) and (IV) only", "(I), (III), (IV), and (V) only", "(I), (II), (III), (IV), and (V)"], ans: 2 },
+        { id: 62, sub: "Chemistry", type: "MCQ", q: "The major product 'S' of the following reaction sequence is:", img: "pics/q62.png", optsImg: ["pics/q62_a.png", "pics/q62_b.png", "pics/q62_c.png", "pics/q62_d.png"], ans: 2 },
+        { id: 63, sub: "Chemistry", type: "MCQ", q: "Major product (S) of following reaction is :", img: "pics/q63.png", opts: ["\\(NH_{2}-NO_{2}-SO_{3}H\\)", "\\(NH_{2}-NO_{2}-OH\\)", "\\(NH_{2}-NO_{2}\\)", "\\(NH_{2}-NO_{2}\\) (Different Isomer)"], ans: 1 },
+        { id: 64, sub: "Chemistry", type: "MCQ", q: "Among the given compounds... The order of decreasing acidity is", img: "pics/q64.png", opts: ["III > IV > I > II", "I > IV > II > III", "IV > I > II > III", "III > I > II > IV"], ans: 0 },
+        { id: 65, sub: "Chemistry", type: "MCQ", q: "Match the type of solution behavior in List-I with the appropriate example in List-II.<br>List-I<br>(P) Forms a minimum boiling azeotrope<br>(Q) Exhibits negative deviation from Raoult's law<br>(R) Undergoes association in solution<br>(S) Forms an ideal solution<br>List-II<br>(1) Benzene and Toluene<br>(2) Ethanol and Water<br>(3) Chloroform and Acetone<br>(4) Acetic acid in Benzene", opts: ["(P)-(2),(Q)-(3),(R)-(4),(S)-(1)", "(P)-(2),(Q)-(1),(R)-(4),(S)-(3)", "(P)-(3),(Q)-(2),(R)-(1),(S)-(4)", "(P)-(4),(Q)-(3),(R)-(2),(S)-(1)"], ans: 0 },
+        { id: 66, sub: "Chemistry", type: "MCQ", q: "How many of the following ions have spin maganetic moment more than 4 B.M.<br>\\(Ti^{3+},Cu^{+},Ni^{2+},Fe^{3+},Mn^{2+},Co^{2+}\\)", opts: ["3", "4", "1", "2"], ans: 3 },
+        { id: 67, sub: "Chemistry", type: "MCQ", q: "Reaction product...", img: "pics/q67.png", optsImg: ["pics/q67_a.png", "pics/q67_b.png", "pics/q67_c.png", "pics/q67_d.png"], ans: 0 },
+        { id: 68, sub: "Chemistry", type: "MCQ", q: "The yellow dye A in the above reaction is", img: "pics/q68.png", optsImg: ["pics/q68_a.png", "pics/q68_b.png", "pics/q68_c.png", "pics/q68_d.png"], ans: 0 },
+        { id: 69, sub: "Chemistry", type: "MCQ", q: "During the silver nitrate test for halogens, the sodium extract is first boiled with a few drops of \\(HNO_{3}\\) to---", opts: ["Decompose sodium halides present", "Help in the precipitation of AgCl", "Increase the concentration of \\(NO_{3}^{-}\\) ions", "Decompose \\(Na_{2}S\\) and NaCN if formed"], ans: 3 },
+        { id: 70, sub: "Chemistry", type: "MCQ", q: "Which of the following statements is not correct?", opts: ["In oxyhaemoglobin \\(Fe^{2+}\\) is paramagnetic", "Four haeme groups are present in haemoglobin", "During respiration the size of \\(Fe^{2+}\\) increases when it changes from diamagnetic to paramagnetic state", "Haeme is the prosthetic group and it is non-protein part"], ans: 0 },
+        { id: 71, sub: "Chemistry", type: "INT", q: "A radioactive sample contains two type of nuclei x and y. x has half life of 5 days where as y has of 30 days. Initial activity of x is 64 times the activity of y. after how many days their activities will be equal?", ans: "0" },
+        { id: 72, sub: "Chemistry", type: "INT", q: "A triatomic linear (neglect vibration degree of freedom) gas of two mole is taken through a reversible process ideally starting from A as shown in figure. The volume ratio \\(\\frac{V_{B}}{V_{A}}=4\\) If the temperature at A is \\(-73^{\\circ}C\\) Total enthalpy change in both steps is R:", img: "pics/q72.png", ans: "0" },
+        { id: 73, sub: "Chemistry", type: "INT", q: "0.20 g of an organic compound gave 0.12 g of AgBr By using Carius method, the percentage of bromine in the compound will be.....", ans: "0" },
+        { id: 74, sub: "Chemistry", type: "INT", q: "How many of the following will give aldol as well as iodoform reaction with suitable reagents<br>(a) MeCHO<br>(b) Me-CH2-CHO<br>(c) Me-C(=O)-Me<br>(d) Ph-CH2-C(=O)-CH3... (See Diagram)", img: "pics/q74.png", ans: "0" },
+        { id: 75, sub: "Chemistry", type: "INT", q: "The mass of \\(Ca(NO_{3})_{2}\\) in mg that is present in 50 ml of solution with 9.50 ppm of Ca is...... ( (Molar mass of \\(Ca(NO_{3})_{2}=164g~mol^{-1})\\) (roundoff to nearest integer)", ans: "0" }
+    ];
+
+    // --- STATE ---
+    let currSub = 'Mathematics';
+    let currIdx = 0; // index in questions array
+    let responses = {}; // {id: val}
+    let status = {}; // {id: 0=NV, 1=NA, 2=Ans, 3=Mark, 4=MarkAns}
+    let timeLeft = 3 * 3600; 
+    let timeSpent = {}; // {id: seconds}
+    let timerInt, trackInt;
+
+    // --- INIT ---
+    function init() {
+        // Init state
+        questions.forEach(q => {
+            status[q.id] = 0; 
+            timeSpent[q.id] = 0;
+        });
+        
+        timerInt = setInterval(tick, 1000);
+        trackInt = setInterval(trackTime, 1000);
+        
+        loadQ(0);
+        updatePalette();
+        updateCounts();
+    }
+
+    // --- LOGIC ---
+    function switchSubject(sub) {
+        currSub = sub;
+        document.querySelectorAll('.subject-tab').forEach(b => {
+            b.classList.toggle('active', b.innerText.toLowerCase().includes(sub.toLowerCase().substring(0,4)));
+        });
+        let idx = questions.findIndex(q => q.sub === sub);
+        loadQ(idx);
+    }
+
+    function loadQ(idx) {
+        currIdx = idx;
+        let q = questions[idx];
+        
+        if (status[q.id] === 0) status[q.id] = 1;
+
+        document.getElementById('qHeader').innerText = `Question ${q.id}`;
+        
+        let html = `<div style="font-weight:bold; margin-bottom:10px;">${q.q}</div>`;
+        if (q.img) html += `<img src="${q.img}" class="q-image" onerror="this.style.display='none'">`;
+
+        html += '<div style="margin-top:20px;">';
+        
+        if (q.type === 'INT') {
+            html += `<label>Answer: <input type="number" class="int-input" id="inp_${q.id}" onchange="saveResp(${q.id}, this.value)" value="${responses[q.id] || ''}"></label>`;
+        } else {
+            // MCQ
+            if (q.optsImg) {
+                q.optsImg.forEach((src, i) => {
+                    let chk = (responses[q.id] == i) ? 'checked' : '';
+                    html += `<label class="option-row"><input type="radio" name="opt" ${chk} onclick="saveResp(${q.id}, '${i}')"> (${i+1}) <img src="${src}" style="max-height:40px;"></label>`;
+                });
+            } else {
+                q.opts.forEach((txt, i) => {
+                    let chk = (responses[q.id] == i) ? 'checked' : '';
+                    html += `<label class="option-row"><input type="radio" name="opt" ${chk} onclick="saveResp(${q.id}, '${i}')"> (${i+1}) ${txt}</label>`;
+                });
+            }
+        }
+        html += '</div>';
+        
+        document.getElementById('qContent').innerHTML = html;
+        MathJax.typesetPromise();
+        updatePalette();
+    }
+
+    function saveResp(id, val) {
+        responses[id] = val;
+        // If marked previously, become Mark+Ans, else Ans
+        if (status[id] === 3 || status[id] === 4) status[id] = 4;
+        else status[id] = 2;
+        updateCounts();
+    }
+
+    function saveNext() {
+        nextQ();
+    }
+    
+    function saveMark() {
+        let id = questions[currIdx].id;
+        if (responses[id] != null) status[id] = 4;
+        else status[id] = 3;
+        updateCounts();
+        nextQ();
+    }
+
+    function markNext() {
+        saveMark();
+    }
+
+    function clearResp() {
+        let id = questions[currIdx].id;
+        delete responses[id];
+        status[id] = 1;
+        loadQ(currIdx); // reload to clear inputs
+        updateCounts();
+    }
+
+    function nextQ() {
+        if (currIdx < questions.length - 1) {
+            let nextSub = questions[currIdx+1].sub;
+            if(nextSub !== currSub) switchSubject(nextSub);
+            else loadQ(currIdx + 1);
+        }
+    }
+
+    function prevQ() {
+        if (currIdx > 0) {
+            let prevSub = questions[currIdx-1].sub;
+            if(prevSub !== currSub) switchSubject(prevSub);
+            else loadQ(currIdx - 1);
+        }
+    }
+
+    function updatePalette() {
+        let html = '';
+        let subQs = questions.filter(q => q.sub === currSub);
+        subQs.forEach(q => {
+            let s = status[q.id];
+            let cls = '';
+            if (s===1) cls = 'visited';
+            if (s===2) cls = 'answered';
+            if (s===3) cls = 'marked';
+            if (s===4) cls = 'marked-ans';
+            
+            let current = (q.id === questions[currIdx].id) ? 'current' : '';
+            html += `<div class="p-btn ${cls} ${current}" onclick="loadQ(${questions.indexOf(q)})">${q.id}</div>`;
+        });
+        document.getElementById('palette').innerHTML = html;
+    }
+
+    function updateCounts() {
+        updatePalette();
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+    
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function tick() {
+        timeLeft--;
+        if (timeLeft <= 0) submitExam();
+        let h = Math.floor(timeLeft/3600);
+        let m = Math.floor((timeLeft%3600)/60);
+        let s = timeLeft%60;
+        document.getElementById('timer').innerText = `${h<10?'0':''}${h}:${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
+    }
+
+    function trackTime() {
+        let id = questions[currIdx].id;
+        timeSpent[id]++;
+    }
+
+    function submitExam() {
+        if(!confirm('Submit Exam?')) return;
+        clearInterval(timerInt);
+        clearInterval(trackInt);
+        
+        let score = 0;
+        questions.forEach(q => {
+            let u = responses[q.id];
+            if (u != null) {
+                if(q.type === 'INT') {
+                    if(parseInt(u) == parseInt(q.ans)) score += 4;
+                    else score -= 1;
+                } else {
+                    if(u == q.ans) score += 4;
+                    else score -= 1;
+                }
+            }
+        });
+        
+        document.getElementById('examView').style.display = 'none';
+        document.getElementById('analysisView').style.display = 'block';
+        document.getElementById('finalScore').innerText = score + " / 300";
+        
+        let totalTime = 3*3600 - timeLeft;
+        let h = Math.floor(totalTime/3600);
+        let m = Math.floor((totalTime%3600)/60);
+        document.getElementById('timeTaken').innerText = `Time Taken: ${h}h ${m}m`;
+        
+        renderAnalysis('Mathematics');
+    }
+
+    function renderAnalysis(sub) {
+        let html = '';
+        let subQs = questions.filter(q => q.sub === sub);
+        subQs.forEach(q => {
+            let u = responses[q.id];
+            let isCorrect = false;
+            let status = 'Skipped';
+            let badge = 'badge-skip';
+            
+            if (u != null) {
+                if (q.type === 'INT') isCorrect = (parseInt(u) == parseInt(q.ans));
+                else isCorrect = (u == q.ans);
+                
+                if (isCorrect) { status = 'Correct'; badge = 'badge-correct'; }
+                else { status = 'Wrong'; badge = 'badge-wrong'; }
+            }
+            
+            let correctVal = (q.type === 'INT') ? q.ans : `(${parseInt(q.ans)+1})`;
+            let userVal = (u == null) ? 'None' : ((q.type === 'INT') ? u : `(${parseInt(u)+1})`);
+
+            html += `
+            <div class="analysis-item">
+                <div style="display:flex; justify-content:space-between;">
+                    <strong>Q${q.id}</strong>
+                    <span class="status-badge ${badge}">${status}</span>
+                </div>
+                <div style="margin:10px 0;">${q.q}</div>
+                ${q.img ? `<img src="${q.img}" style="max-height:80px; display:block; margin:5px 0;">` : ''}
+                <div style="font-size:0.9rem; color:#555; background:#f9f9f9; padding:10px; border-radius:4px;">
+                    Your Answer: <b>${userVal}</b> | Correct: <b>${correctVal}</b><br>
+                    Time Spent: ${timeSpent[q.id]}s
+                </div>
+            </div>`;
+        });
+        document.getElementById('analysisList').innerHTML = html;
+        MathJax.typesetPromise();
+    }
+
+    init();
+
+</script>
+</body>
+</html>
