@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTA JEE Main - CBT Mock Test</title>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        :root {
+            --nta-blue: #337ab7;
+            --nta-header: #fff;
+            --nta-text: #333;
+            --nta-border: #ddd;
+            --btn-green: #5cb85c;
+            --btn-red: #d9534f;
+            --btn-blue: #337ab7;
+            --btn-grey: #f0f0f0;
+            --status-green: #5cb85c;
+            --status-red: #d9534f;
+            --status-purple: #8e44ad;
+            --status-white: #fff;
+            --font-size: 16px;
+        }
+
+        /* WATERMARK STRIP */
+        .watermark-strip {
+            background: #000;
+            color: #fff;
+            text-align: center;
+            font-size: 12px;
+            padding: 4px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 2px solid gold;
+        }
+        .watermark-strip:hover { background: #333; color: gold; }
+
+        /* DARK MODE */
+        body.dark-mode {
+            --nta-header: #222;
+            --nta-text: #eee;
+            --nta-border: #444;
+            --btn-grey: #333;
+            background-color: #111;
+            color: #eee;
+        }
+        
+        body.dark-mode .q-panel, body.dark-mode .sidebar, body.dark-mode .header-top, body.dark-mode .sub-header {
+            background-color: #222;
+            border-color: #444;
+            color: #eee;
+        }
+        body.dark-mode .result-container { background: #222; color: #eee; }
+        body.dark-mode .res-card { background: #333; border: 1px solid #555; }
+        body.dark-mode table { border-color: #555; }
+        body.dark-mode th { background: #444; color: #fff; }
+        body.dark-mode td { border-color: #555; }
+
+        /* CURSOR TRAIL */
+        .cursor-dot {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background: #f5f5f5; height: 100vh; display: flex; flex-direction: column; font-size: var(--font-size); user-select: none; }
+
+        /* HEADER */
+        .header-top { background: var(--nta-header); height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #ccc; color: var(--nta-text); position: relative; z-index: 50; }
+        .logo-section { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.2rem; }
+        .candidate-info { display: flex; align-items: center; gap: 15px; }
+        .candidate-img { width: 40px; height: 40px; border-radius: 50%; background: #ccc; border: 1px solid #999; }
+        
+        .sub-header { background: #333; color: white; padding: 5px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        .access-tools button { background: none; border: 1px solid #777; color: white; padding: 2px 8px; cursor: pointer; margin-right: 5px; font-size: 0.8rem; }
+        .access-tools button:hover { background: #555; }
+
+        /* MAIN LAYOUT */
+        .main-container { display: flex; flex: 1; height: calc(100vh - 120px); overflow: hidden; position: relative; }
+
+        /* LEFT QUESTION PANEL */
+        .q-panel { flex: 3; background: var(--nta-header); display: flex; flex-direction: column; border-right: 1px solid var(--nta-border); position: relative; }
+        .q-header-strip { padding: 10px; border-bottom: 1px solid var(--nta-border); font-weight: bold; display: flex; justify-content: space-between; align-items: center; background: var(--nta-header); color: var(--nta-blue); }
+        .q-scroll-area { flex: 1; overflow-y: auto; padding: 20px; transform-origin: top left; }
+        
+        .question-text { font-size: 1.1em; margin-bottom: 15px; line-height: 1.5; color: var(--nta-text); }
+        .q-image { max-width: 100%; border: 1px solid #ccc; display: block; margin: 10px 0; }
+
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        .option-box { display: flex; gap: 10px; padding: 10px; border: 1px solid var(--nta-border); border-radius: 4px; cursor: pointer; transition: 0.2s; color: var(--nta-text); }
+        .option-box:hover { background: #f9f9f9; }
+        body.dark-mode .option-box:hover { background: #333; }
+        .option-box input { margin-top: 4px; }
+
+        /* FOOTER BUTTONS */
+        .footer-strip { padding: 10px 20px; border-top: 1px solid var(--nta-border); background: var(--nta-header); display: flex; justify-content: space-between; align-items: center; }
+        .btn { padding: 8px 15px; border: 1px solid #ccc; border-radius: 2px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .btn-success { background: var(--btn-green); color: white; border-color: #4cae4c; }
+        .btn-danger { background: var(--btn-red); color: white; border-color: #d43f3a; }
+        .btn-primary { background: var(--btn-blue); color: white; border-color: #2e6da4; }
+        .btn-default { background: white; color: #333; }
+        .btn-warning { background: #eea236; color: white; border-color: #d58512; }
+
+        /* RIGHT SIDEBAR */
+        .sidebar { flex: 1; min-width: 320px; max-width: 380px; background: #fff; display: flex; flex-direction: column; border-left: 5px solid #eee; transition: transform 0.3s ease; }
+        .timer-box { background: #fcf8e3; color: #8a6d3b; padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px solid #faebcc; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        .candidate-card { padding: 10px; display: flex; gap: 10px; align-items: center; background: #e0eef7; border-bottom: 1px solid #ccc; font-size: 0.9rem; }
+        .candidate-card img { width: 50px; height: 50px; border: 1px solid #333; }
+
+        .palette-legend { padding: 10px; font-size: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: #fff; border-bottom: 1px solid #eee; height: 160px; overflow-y: auto;}
+        .leg-item { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: #000; }
+        .leg-box { width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: 2px; }
+        
+        .leg-not-visited { background: #fff; border: 1px solid #ccc; color: black; }
+        .leg-not-ans { background: var(--status-red); color: white; clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%); height: 30px; border-radius: 0;}
+        .leg-ans { background: var(--status-green); color: white; clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%); height: 30px; border-radius: 0; }
+        .leg-review { background: var(--status-purple); color: white; border-radius: 50%; }
+        .leg-ans-review { background: var(--status-purple); color: white; border-radius: 50%; position: relative; }
+        .leg-ans-review::after { content:''; position: absolute; bottom: 0px; right: 0px; width: 10px; height: 10px; background: #5cb85c; border-radius: 50%; border: 1px solid white; }
+
+        .subject-tabs { background: #337ab7; display: flex; padding: 0; }
+        .tab-btn { flex: 1; padding: 8px; background: #337ab7; color: white; border: none; border-right: 1px solid #2e6da4; cursor: pointer; text-align: center; }
+        .tab-btn.active { background: #fff; color: #337ab7; font-weight: bold; border-top: 3px solid #d9534f; }
+
+        .question-grid-container { flex: 1; overflow-y: auto; padding: 10px; background: #e5f6fd; }
+        .grid-header { background: #337ab7; color: white; padding: 5px 10px; font-weight: bold; font-size: 0.9rem; }
+        .q-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 10px; }
+        
+        .pal-btn { width: 40px; height: 35px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; position: relative; font-family: Arial; font-size: 14px; }
+        .pal-btn.not-visited { background: #fff; color: #000; border-radius: 4px; }
+        .pal-btn.not-ans { background: var(--status-red); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%); border: none; }
+        .pal-btn.ans { background: var(--status-green); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%); border: none; }
+        .pal-btn.review { background: var(--status-purple); color: #fff; border-radius: 50%; border: none; }
+        .pal-btn.ans-review { background: var(--status-purple); color: #fff; border-radius: 50%; border: none; }
+        .pal-btn.ans-review::after { content: '✔'; position: absolute; bottom: -2px; right: 0; font-size: 10px; color: #5cb85c; background: white; border-radius: 50%; padding: 0 2px; }
+
+        .pal-btn:hover { opacity: 0.8; }
+        .pal-btn.current { border: 2px solid #000; transform: scale(1.1); z-index: 10; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+
+        /* Login Screen */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .login-box { width: 400px; padding: 30px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-top: 5px solid var(--nta-blue); text-align: center; }
+        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+
+        /* --- RESULT SCREEN STYLES --- */
+        .result-container {
+            display: none; /* Hidden by default */
+            padding: 20px;
+            background: #fff;
+            position: absolute;
+            top: 25px; /* Below watermark */
+            left: 0;
+            width: 100%;
+            height: calc(100% - 25px);
+            overflow-y: auto;
+            z-index: 2000;
+        }
+
+        .res-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .res-card-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+        .res-card { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 8px; width: 200px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .res-card h3 { margin: 0 0 10px 0; font-size: 0.9rem; color: #666; }
+        .res-card .val { font-size: 1.8rem; font-weight: bold; color: #333; }
+
+        .analysis-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
+        .analysis-table th, .analysis-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        .analysis-table th { background: #337ab7; color: white; }
+        .analysis-table tr:nth-child(even) { background-color: #f2f2f2; }
+        
+        .status-correct { color: green; font-weight: bold; }
+        .status-wrong { color: red; font-weight: bold; }
+        .status-skip { color: orange; }
+
+        /* PRINT STYLES (PDF DOWNLOAD) */
+        @media print {
+            body { overflow: visible !important; height: auto !important; background: white; }
+            .header-top, .sub-header, .main-container, #login-overlay, .cursor-dot, .mobile-only, .overlay { display: none !important; }
+            
+            .result-container { 
+                display: block !important; 
+                position: relative !important; 
+                top: 0 !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+                padding: 0 !important;
+            }
+            
+            .watermark-strip { position: fixed; top: 0; width: 100%; border-bottom: 1px solid #000; }
+            .res-header { margin-top: 40px; } /* Space for watermark */
+            .btn { display: none; } /* Hide buttons in PDF */
+            .res-card { border: 1px solid #000; box-shadow: none; }
+            table { border: 1px solid #000; }
+            th, td { border: 1px solid #000; color: #000; }
+        }
+
+        /* --- MOBILE ONLY STYLES --- */
+        .mobile-only { display: none; } 
+        .overlay { display: none; }
+
+        @media (max-width: 800px) {
+            .header-top { padding: 0 10px; height: 50px; }
+            .logo-section { font-size: 1rem; }
+            .candidate-info, .sub-header { display: none; }
+            
+            .mobile-only { display: flex; align-items: center; gap: 10px; }
+            .mob-timer { color: #d9534f; font-weight: bold; font-size: 1rem; background: #fff; padding: 2px 5px; border-radius: 4px; border: 1px solid #ddd; }
+            .menu-btn { font-size: 24px; background: none; border: none; cursor: pointer; color: var(--nta-blue); padding: 5px; }
+
+            .main-container { height: calc(100vh - 80px); }
+            .q-panel { flex: 1; border-right: none; width: 100%; }
+            .q-scroll-area { padding: 10px; padding-bottom: 80px; }
+
+            .sidebar {
+                position: absolute; top: 0; right: 0; bottom: 0; width: 80%; z-index: 1000;
+                transform: translateX(100%); box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            }
+            .sidebar.active { transform: translateX(0); }
+            
+            .overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+            .overlay.active { display: block; }
+
+            .footer-strip {
+                position: absolute; bottom: 0; left: 0; width: 100%; background: #fff;
+                border-top: 2px solid #ccc; padding: 10px; flex-wrap: wrap; gap: 5px; justify-content: center; z-index: 500;
+            }
+            .footer-strip .btn { flex: 1; font-size: 0.8rem; padding: 10px 5px; white-space: nowrap; }
+            .mob-footer-row { display: flex; width: 100%; gap: 5px; }
+        }
+        
+        .hidden { display: none !important; }
+        .zoom-125 { transform: scale(1.25); }
+        .zoom-150 { transform: scale(1.5); }
+    </style>
+</head>
+<body>
+
+<a href="https://t.me/mahadev_ki_iccha" target="_blank" class="watermark-strip">
+    Made by t.me/mahadev_ki_iccha
+</a>
+
+<div id="cursor-dot" class="cursor-dot"></div>
+<div class="overlay" onclick="toggleSidebar()"></div>
+
+<div id="login-overlay">
+    <div class="login-box">
+        <h2 style="color:var(--nta-blue);">System Login</h2>
+        <div style="font-size:3rem; color:#ccc; margin:20px;">🖥️</div>
+        <input type="text" id="username" placeholder="Enter Candidate Name" value="John Doe">
+        <button class="btn btn-primary" style="width:100%" onclick="startTest()">Login</button>
+        <p style="margin-top:20px; font-size:0.8rem; color:#888;">NTA JEE Main - Mock Test v2.0</p>
+    </div>
+</div>
+
+<div class="header-top">
+    <div class="logo-section">
+        <span style="color:orange;">NTA</span> <span style="font-weight:normal">JEE (Main)</span>
+    </div>
+    <div class="candidate-info">
+        <div style="text-align:right; font-size:0.9rem;">
+            <div>Candidate Name: <b id="header-name">User</b></div>
+            <div style="color:green; font-weight:bold;">Subject: <span id="header-sub">Maths</span></div>
+        </div>
+        <div class="candidate-img" style="background: url('https://www.w3schools.com/howto/img_avatar.png') center/cover;"></div>
+    </div>
+    <div class="mobile-only">
+        <div class="mob-timer" id="mob-timer">03:00:00</div>
+        <button class="menu-btn" onclick="toggleSidebar()"><span class="material-icons">menu</span></button>
+    </div>
+</div>
+
+<div class="sub-header">
+    <div class="access-tools">
+        <span>Accessibility: </span>
+        <button onclick="changeTheme()">🌗 Theme</button>
+        <button onclick="resizeFont(1)">A+</button>
+        <button onclick="resizeFont(-1)">A-</button>
+        <button onclick="toggleZoom()">🔍 Zoom</button>
+        <button onclick="toggleCursor()">👆 Cursor</button>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <span>Language:</span>
+        <select style="padding:2px;"><option>English</option><option>Hindi</option></select>
+    </div>
+</div>
+
+<div class="main-container" id="test-interface">
+    <div class="q-panel">
+        <div class="q-header-strip">
+            <span>Question No. <span id="q-num">1</span></span>
+            <span style="font-size:1.5rem;">⬇</span>
+            <span>Marks: <span style="color:green">+4</span> <span style="color:red">-1</span></span>
+        </div>
+        
+        <div class="q-scroll-area" id="zoom-container">
+            <div id="q-text" class="question-text">Loading Question...</div>
+            <img id="q-img" src="" alt="" class="q-image hidden">
+            <div id="q-img-msg" style="color:red; border:1px dashed red; padding:5px;" class="hidden">Image not found</div>
+
+            <div id="opts-container" class="options-container hidden"></div>
+            <div id="num-container" class="hidden" style="margin-top:20px;">
+                <label><b>Enter Answer: </b></label>
+                <input type="number" id="num-input" style="padding:8px; font-size:1.2rem; border:2px solid #337ab7;">
+            </div>
+        </div>
+
+        <div class="footer-strip">
+            <div class="mob-footer-row">
+                 <button class="btn btn-default" onclick="prevQ()"><< Prev</button>
+                 <button class="btn btn-warning" onclick="markReviewNext()">Mark & Next</button>
+                 <button class="btn btn-success" onclick="saveNext()">Save & Next</button>
+            </div>
+            <div class="mob-footer-row" style="margin-top:5px; display:none;"> 
+                <button class="btn btn-default" onclick="clearResp()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="mobile-only" style="padding:10px; justify-content:flex-end; border-bottom:1px solid #ddd;">
+             <button class="btn btn-danger" onclick="toggleSidebar()">Close Palette</button>
+        </div>
+        <div class="timer-box">
+            <span class="material-icons">timer</span> Time Left: <span id="timer" style="color:#d9534f; font-size:1.2rem;">03:00:00</span>
+        </div>
+        <div class="candidate-card">
+            <img src="https://www.w3schools.com/howto/img_avatar.png" alt="User">
+            <div><div style="font-weight:bold" id="sidebar-name">John Doe</div><div>Roll No: 20250001</div></div>
+        </div>
+        <div class="palette-legend">
+            <div class="leg-item"><div class="leg-box leg-not-visited" id="count-nv">0</div> Not Visited</div>
+            <div class="leg-item"><div class="leg-box leg-not-ans" id="count-na">0</div> Not Answered</div>
+            <div class="leg-item"><div class="leg-box leg-ans" id="count-ans">0</div> Answered</div>
+            <div class="leg-item"><div class="leg-box leg-review" id="count-rev">0</div> Marked for Review</div>
+            <div class="leg-item" style="grid-column: span 2;"><div class="leg-box leg-ans-review" id="count-ans-rev">0</div> Ans & Marked for Review</div>
+        </div>
+        <div class="grid-header">Choose a Question</div>
+        <div class="subject-tabs">
+            <button class="tab-btn active" onclick="setSub('Maths')">Maths</button>
+            <button class="tab-btn" onclick="setSub('Physics')">Physics</button>
+            <button class="tab-btn" onclick="setSub('Chemistry')">Chem</button>
+        </div>
+        <div class="question-grid-container"><div class="q-grid" id="palette-grid"></div></div>
+        <div style="padding:10px; text-align:center; background:#eee;">
+            <button class="btn btn-success" style="width:100%" onclick="submitTest()">SUBMIT TEST</button>
+        </div>
+    </div>
+</div>
+
+<div id="result-page" class="result-container">
+    <div class="res-header">
+        <h1>NTA JEE Main Mock Test Result</h1>
+        <p>Candidate: <span id="res-name"></span> | Date: <span id="res-date"></span></p>
+        <button class="btn btn-primary" onclick="window.print()">Download Result as PDF</button>
+    </div>
+
+    <div class="res-card-grid">
+        <div class="res-card">
+            <h3>Total Score</h3>
+            <div class="val" id="res-score" style="color:var(--nta-blue)">0/300</div>
+        </div>
+        <div class="res-card">
+            <h3>Correct</h3>
+            <div class="val" id="res-corr" style="color:green">0</div>
+        </div>
+        <div class="res-card">
+            <h3>Wrong</h3>
+            <div class="val" id="res-wrong" style="color:red">0</div>
+        </div>
+        <div class="res-card">
+            <h3>Attempted</h3>
+            <div class="val" id="res-att">0</div>
+        </div>
+    </div>
+
+    <h3>Detailed Analysis</h3>
+    <table class="analysis-table">
+        <thead>
+            <tr>
+                <th>Q.No</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Your Answer</th>
+                <th>Correct Answer</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="analysis-body">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // --- DATABASE ---
+    const db = [
+        // Maths
+        {id:1, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`Let $A=[a_{ij}]_{2\times2}$ be a matrix such that $Tr(A)=5$. If $f(x)=det(A-xI)$ and $f(A)=A^{2}+aA+3I$, then value of $Tr[(adj~A)^{2}+(a+1)adj~A+3I]$ is equal to:`, opts:['0','1','7','5']},
+        {id:2, sub:'Maths', type:'mcq', ans:'B', txt:String.raw`Using all the letters of the word EENADU, words are formed and arranged as in dictionary order, then the rank of "EENADU" is:`, opts:['100','181','182','183']},
+        {id:3, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`Let $(x^{3}+px^{2}+2x-5)^{19}(x^{2}+qx-41)^{8}(x^{4}-x^{3}+x-7)^{6}$ be an identity, where $p, q, a_{95}... a_0$ are integers. Compute the smallest positive value of $p$.`, opts:['6','5','8','7']},
+        {id:4, sub:'Maths', type:'mcq', ans:'B', txt:String.raw`Given two lines defined by their Cartesian equations:<br>$$L_{1}:\frac{x-2}{1}=\frac{y+1}{2}=\frac{z-3}{-1} \quad \text{and} \quad L_{2}:\frac{x+1}{2}=\frac{y-1}{\alpha}=\frac{z}{1}$$<br>If the shortest distance separating these lines is $\frac{3}{\sqrt{14}}$, find the sum of all permissible values of $\alpha$.`, opts:['2/27','-2/27','5/54','-5/54']},
+        {id:5, sub:'Maths', type:'mcq', ans:'B', txt:String.raw`Box A contains 2 black and 3 red balls while box B contains 3 black and 4 red balls. Out of these two boxes one is selected at random and the probability of choosing box A is double that of box B. If a red ball is drawn from the selected box, then the probability that it has come from box B is:`, opts:['21/41','10/31','12/31','13/41']},
+        {id:6, sub:'Maths', type:'mcq', ans:'A', txt:String.raw`If $f(x)=\int e^{\sin x}(\frac{5 \cos x+\cos^{3}x}{(2-\sin x)^{3}+\cos^{2}x})dx$ and $f(0)=1$ then value of $f(\pi/2)$ equals:`, opts:[String.raw`$\sqrt{3}e$`,String.raw`$\frac{\sqrt{3}e}{2}$`,String.raw`$\frac{3e}{2}$`,'3e']},
+        {id:7, sub:'Maths', type:'mcq', ans:'B', txt:String.raw`The area inside the parabola $5x^{2}-y=0$ but outside the parabola $2x^{2}-y+9=0$ is equal to: (sq. unit)`, opts:[String.raw`$6\sqrt{3}$`,String.raw`$12\sqrt{3}$`,String.raw`$3\sqrt{3}$`,String.raw`$24\sqrt{3}$`]},
+        {id:8, sub:'Maths', type:'mcq', ans:'C', txt:String.raw`Let n be the number of integral values of x, which satisfy the equation $\tan^{-1}x-\sin^{-1}x=\cos^{-1}x-\cot^{-1}x$. Let $\vec{c}=|\vec{a}\times \vec{b}|\vec{a}+(\vec{a}\cdot \vec{b})\vec{b}$ where $\vec{a}$ and $\vec{b}$ are unit vectors and angle between them is $\frac{\pi}{6}$. Let the value of definite integral $\int_{-\pi/2}^{\pi/2}\frac{\ln(\sec x)}{(2013)^{\sin x}+1}dx$ equals $\frac{\pi}{2}\ln k$. Then the value of $(n+2|\vec{c}|^{2}+k)$ is:`, opts:['12','19/4','17/2','None of these']},
+        {id:9, sub:'Maths', type:'mcq', ans:'A', txt:String.raw`Given the parabola $x^{2}=-4y$, a point $P(4,-4)$ lies on it. A focal chord PQ is drawn through P. Let M and N be the points where perpendiculars from P and Q intersect the directrix of the parabola. Find the area of the quadrilateral PQMN.`, opts:['125/8','25/2','75/4','100/3']},
+        {id:10, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`If $\vec{a}$ and $\vec{b}$ are two vectors such that $|\vec{a}|=1, |\vec{b}|=4, \vec{a}\cdot\vec{b}=2$. If $\vec{c}=(2\vec{a}\times\vec{b})-3\vec{b}$ then angle between $\vec{b}$ and $\vec{c}$:`, opts:[String.raw`$\pi/6$`,String.raw`$\pi/3$`,String.raw`$2\pi/3$`,String.raw`$5\pi/6$`]},
+        {id:11, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`Let M be the value of the limit $\lim_{x\rightarrow\infty}(-\frac{3}{2}(\frac{1}{3}-\frac{x^{2}}{x^{2}+1}))^{x^2}$. Determine the value of the expression $\frac{\log_{e}M}{2+\log_{e}M}$.`, opts:['3/2','-3/2','3','-3']},
+        {id:12, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`Let $S=\{1,2,3,4,5,6,7\}$. Then the number of possible functions $f:S\rightarrow S$ such that $f(m\cdot n)=f(m)\cdot f(n)$ for every $m, n \in S$ and $mn \in S$ is equal to:`, opts:['360','460','390','490']},
+        {id:13, sub:'Maths', type:'mcq', ans:'B', txt:String.raw`If the ratio of $k^{th}$ terms of two A.P.'s are in the ratio $(2k-3) : (3k+1)$ and the ratio of their sum to first 65 terms of these two AP's is $a : b$ (where a and b are coprime numbers), then the value of $(b+2a)$ is:`, opts:['246','226','248','228']},
+        {id:14, sub:'Maths', type:'mcq', ans:'B', txt:String.raw`A line with direction ratios (2, 7, -5) is drawn to intersect the lines $\frac{x-5}{3}=\frac{y-7}{-1}=\frac{z+2}{1}$ and $\frac{x+3}{-3}=\frac{y-3}{2}=\frac{z-6}{4}$ at P and Q respectively. Length of $(PQ)^{2}$ is:`, opts:['82','78','64','49']},
+        {id:15, sub:'Maths', type:'mcq', ans:'A', txt:String.raw`Consider the three linear equations with respect to X, Y, Z as:<br>$(x)X+Y+2Z=0$<br>$(f(x))X+3Y+x^{2}Z=0$<br>$(5x)X+6Y+Z=0$<br>having non-trivial solution for X, Y, Z. The curve $f(x)$:`, opts:['is always increasing','is always decreasing','has exactly one critical point','has three critical points']},
+        {id:16, sub:'Maths', type:'mcq', ans:'C', txt:String.raw`Solution $y=y(x)$ of the differential equation $(x^{3}+2xy)dy=(y^{2}-yx^{2})dx, y(1)=1$ is given by:`, opts:[String.raw`$2y^{3}-x^{3}=xy$`,String.raw`$2x^{2}+xy=3y^{3}$`,String.raw`$y^{2}+x^{2}y=2x$`,String.raw`$x^{2}-yx^{2}=y^{3}$`]},
+        {id:17, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`The side BC of a triangle ABC lies on x-axis. If its circumcentre is (5, 7) and orthocentre is (2, 3) and vertices $A=(a_{1},b_{1}), B=(a_{2},b_{2}), C=(a_{3},b_{3})$ (where $a_{2}<a_{3}$). Then:`, opts:[String.raw`$a_{2}+a_{3}=12$`,String.raw`$b_{1}+b_{2}+b_{3}=1$`,String.raw`$B=(5-\sqrt{30},0)$`,String.raw`$C=(5+\sqrt{60},0)$`]},
+        {id:18, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`$2(\cos x+\cos 2x)+(1+2 \cos x)\sin 2x=2 \sin x$. Total no. of solutions in $[-\pi,\pi]$ is:`, opts:['3','6','4','5']},
+        {id:19, sub:'Maths', type:'mcq', ans:'D', txt:String.raw`If $A(z_{1})$ and $B(z_{2})$ be two complex numbers satisfying the equation $z+(\sqrt{3}+i)t-i=0$ and $\sqrt{3}\bar{z}+(1+i\sqrt{3})\lambda-\sqrt{3}i=0$ respectively $\forall t, \lambda \in R$. Let for some $z_{1}$ and $z_{2}$, $\arg(z_{1})=\frac{\pi}{4}$ and $\arg(z_{2})=-\frac{3\pi}{4}$ then the area of the triangle ABC (where C is point $0+i$) is:`, opts:[String.raw`$\frac{\sqrt{3}+1}{2}$`,String.raw`$\frac{\sqrt{3}+1}{4}$`,String.raw`$\frac{\sqrt{3}+2}{4}$`,String.raw`$\frac{\sqrt{3}+2}{2}$`]},
+        {id:20, sub:'Maths', type:'mcq', ans:'A', txt:String.raw`Let ellipse $\frac{x^{2}}{25}+\frac{y^{2}}{p^{2}}=1$ and hyperbola $\frac{x^{2}}{9}-\frac{y^{2}}{q^{2}}=1$ are confocal and meet at points A,B,C and D. If foci of ellipse subtend $90^{\circ}$ at point A and $e_{1}$ and $e_{2}$ are eccentricities of ellipse and hyperbola then value of $25{e_{1}}^{2}+9{e_{2}}^{2}$ is:`, opts:['34','28','30','36']},
+        {id:21, sub:'Maths', type:'num', ans:7, txt:String.raw`What is the remainder when $((7)^{77})^{77}$ is divided by 10?`},
+        {id:22, sub:'Maths', type:'num', ans:10, txt:String.raw`Let $S=\{1,2,3,4\}$. A binary relation P is defined on S such that for any a, b $\in$ S, aPb if and only if $b=a+1$. Let k be the total number of ordered pairs in P. Let p be the minimum number of additional ordered pairs required to make P a reflexive relation. Let q be the minimum number of additional ordered pairs required to make P a symmetric relation. Determine the value of $k+p+q$.`},
+        {id:23, sub:'Maths', type:'num', ans:7, txt:String.raw`The highest positive integral value of $\lambda$ so that the equation $x^{2}-5|x|+6-|\lambda-2|=0$ has four distinct roots is:`},
+        {id:24, sub:'Maths', type:'num', ans:6, txt:String.raw`$f:R^{+}\rightarrow R$ be a differentiable function satisfying $f(x)=x \ln x+x-\int_{1}^{x}\frac{f(t)}{t\cdot \ln t}dt \forall x\in R^{+}$, then the value of $f'(e)+f''(\frac{1}{4})=$`},
+        {id:25, sub:'Maths', type:'num', ans:4, txt:String.raw`The number of integral values of $\lambda$ for which the variable line $3x+4y-\lambda=0$ lies between the circles $x^{2}+y^{2}-2x-2y+1=0$ and $x^{2}+y^{2}-18x-2y+78=0$ without having any common points with any circle is equal to 2k, then value of k is:`},
+        // Physics
+        {id:26, sub:'Physics', type:'mcq', ans:'A', img:true, txt:String.raw`In circuit in following fig. the value of Y is:`, opts:['0','1','Fluctuates between 0 and 1','Indeterminate as the circuit can\'t be realised']},
+        {id:27, sub:'Physics', type:'mcq', ans:'A', txt:String.raw`A metal plate of area $10^{3}cm^{2}$ rests on a layer of oil 6 mm thick. A tangential force of $10^{-2}N$ is applied on it to move it with a constant velocity of $6 cm s^{-1}$. The coefficient of viscosity of the liquid is:`, opts:['0.1 poise','0.5 poise','0.7 poise','0.9 poise']},
+        {id:28, sub:'Physics', type:'mcq', ans:'C', img:true, txt:String.raw`A uniform slender bar AB of length L is supported in horizontal position as in figure. At what distance x from the hinge A, should the vertical string DE be attached to the bar in order that, when it is cut, there will be no immediate change in the reaction at A?`, opts:['2L/5','3L/5','2L/3','3L/4']},
+        {id:29, sub:'Physics', type:'mcq', ans:'A', img:true, txt:String.raw`What is the velocity (in cm/s) of image in situation shown below (O = object, f = focal length). Object moves with velocity 10cm/s and mirror moves with velocity 2 cm/s as shown.`, opts:['0','2','6','4']},
+        {id:30, sub:'Physics', type:'mcq', ans:'B', txt:String.raw`Two point dipoles $p\hat{k}$ and $\frac{p}{2}\hat{k}$ are located at (0,0,0) & (1 m, 0, 2 m) respectively. The resultant electric field due to the two dipoles at the point (1 m, 0, 0) is:`, opts:[String.raw`$\frac{9p}{32\pi\epsilon_{0}}\hat{k}$`,String.raw`$\frac{-7p}{32\pi\epsilon_{0}}\hat{k}$`,String.raw`$\frac{7p}{32\pi\epsilon_{0}}\hat{k}$`,'none of these']},
+        {id:31, sub:'Physics', type:'mcq', ans:'D', img:true, txt:String.raw`A converging lens of focal length 20 cm and diameter 5 cm is cut along the line AB. The part of the lens shown shaded in the diagram is now used to form an image of a point P placed 30 cm away from it on the line XY. Which is perpendicular to the plane of the lens. The image of P will be formed:`, opts:['0.5 cm above XY','1 cm below XY','on XY','1.5 cm below XY']},
+        {id:32, sub:'Physics', type:'mcq', ans:'A', txt:String.raw`Evaluate the following statements concerning thermodynamic properties:<br>(I) An extensive property's value is directly proportional to the size or amount of the system.<br>(II) Pressure (P), temperature (T), and specific volume (v) are examples of intensive properties.<br>(III) Internal energy (U), entropy (S), and number of moles (n) are intensive properties.<br>Choose the option with the correct statement(s).`, opts:['(I) and (II) only','(II) and (III) only','(I) only','(I), (II) and (III)']},
+        {id:33, sub:'Physics', type:'mcq', ans:'D', txt:String.raw`A thin, non-conducting disk of radius R carries a uniform surface charge density $\sigma$. The disk rotates about its central axis with a constant angular velocity $\Omega$. An Amperian loop $P_{1}$ is conceptually defined to measure the total effective current produced by this rotating charged disk. A second Amperian loop $P_{2}$ is a large circular path, concentric with the disk, and completely surrounds it. Determine the value of $I_{P_{1}}-I_{P_{2}}$, where $I_{P_{1}}$ is the total effective current and $I_{P_{2}}$ is the net current passing through the area bounded by loop $P_{2}$.`, opts:[String.raw`$\sigma\Omega R^{2}$`,String.raw`$\frac{1}{2}\sigma\Omega R^{2}$`,String.raw`$\frac{1}{4}\sigma\Omega R^{2}$`,'0']},
+        {id:34, sub:'Physics', type:'mcq', ans:'B', txt:String.raw`An experimenter performs Young's double-slit experiment using two different monochromatic light sources: one emitting green light and another emitting violet light. Which of the following statements accurately describes the comparison of the interference patterns produced by these two light sources, assuming all other experimental parameters are kept constant?`, opts:['The fringe width produced by green light will be smaller than that produced by violet light.','The fringe width produced by green light will be larger than that produced by violet light.','The fringe width will be the same for both green and violet light, but the intensity will differ.','Violet light will produce a clearer interference pattern due to its higher frequency.']},
+        {
+    id: 35, 
+    sub: 'Physics', 
+    type: 'mcq', 
+    ans: 'B', 
+    img: true, // This requires a file named q35.png to exist!
+    txt: String.raw`A square-shaped conducting wire loop... (text)...`,
+    opts: [
+        // Ensure you have these files too: q35_a.png, q35_b.png, etc.
+        '<img src="q35_a.png" height="150" alt="A">', 
+        '<img src="q35_b.png" height="150" alt="B">', 
+        '<img src="q35_c.png" height="150" alt="C">', 
+        '<img src="q35_d.png" height="150" alt="D">'
+    ]
+},
+        {id:36, sub:'Physics', type:'mcq', ans:'C', txt:String.raw`A particle is projected from ground towards a vertical wall 80 m away at an angle of $37^{\circ}$ with horizontal with initial velocity of $50 m/s$. After its collision with wall & then once with ground find at what distance in meter from wall will it strike the ground. The component of velocity normal to the surface becomes half after collision with each surface.`, opts:['60 m','80 m','140 m','160 m']},
+        {id:37, sub:'Physics', type:'mcq', ans:'D', img:true, txt:String.raw`A small block slides with velocity $0.5\sqrt{gr}$ on the horizontal frictionless surface which after a point B is in a circular path in the vertical plane as shown in the figure. The block leaves the surface at the point C where it makes angle $\theta$ from vertical. The value of the angle $\theta$ is:`, opts:[String.raw`$\cos^{-1}(\frac{4}{9})$`,String.raw`$\cos^{-1}(\frac{3}{5})$`,String.raw`$\cos^{-1}(\frac{1}{2})$`,'None of the above']},
+        {id:38, sub:'Physics', type:'mcq', ans:'C', txt:String.raw`A mass M is suspended from a spring of negligible mass. The spring is pulled a little and then released so that the mass executes SHM of time period T. If the mass is increased by m, the time period becomes $5T/3$, then the ratio of $\frac{m}{M}$ is:`, opts:['3/5','25/9','16/9','5/3']},
+        {id:39, sub:'Physics', type:'mcq', ans:'A', txt:String.raw`In a series LCR the voltage across resistance, capacitance and inductance is 10 V each. If the capacitance is short circuited, the voltage across the inductance will be....`, opts:[String.raw`$\frac{10}{\sqrt{2}}V$`,String.raw`$10 V$`,String.raw`$10\sqrt{2} V$`,String.raw`$20 V$`]},
+        {id:40, sub:'Physics', type:'mcq', ans:'A', img:true, txt:String.raw`Consider the following physical quantities and their corresponding dimensional formulas. Identify the correct match from the given choices.<br>List-I: (A) Momentum, (B) Strain, (C) Gravitational Constant (G), (D) Planck's Constant (h)<br>List-II: (I) $[M^{0}L^{0}T^{0}]$, (II) $[MLT^{-1}]$, (III) $[M^{-1}L^{3}T^{-2}]$, (IV) $[ML^{2}T^{-1}]$`, opts:['(A)-(II), (B)-(I), (C)-(III), (D)-(IV)','(A)-(I), (B)-(II), (C)-(IV), (D)-(III)','(A)-(II), (B)-(III), (C)-(I), (D)-(IV)','(A)-(IV), (B)-(I), (C)-(III), (D)-(II)']},
+        {id:41, sub:'Physics', type:'mcq', ans:'C', txt:String.raw`A long glass capillary tube of uniform bore of diameter 1 mm with both ends open is filled completely with water and then held vertically in air. If the surface tension of water is 0.075 N/m, the length of the water column remaining in the glass tube is $(g=10 m/s^{2})$`, opts:['zero','1.5 cm','3.0 cm','6.0 cm']},
+        {id:42, sub:'Physics', type:'mcq', ans:'D', txt:String.raw`When a metal plate is exposed to light of wavelength 400 nm, a negative potential of 1.1V is found to be needed to stop the photo current. The threshold wavelength of the photoelectrons is.....`, opts:['450 nm','500 nm','580 nm','620 nm']},
+        {id:43, sub:'Physics', type:'mcq', ans:'C', txt:String.raw`A physical quantity K is determined from measurements of four other quantities A, B, C, and D using the relation $K=\frac{A^{3}B}{C^{2}\sqrt{D}}$. The percentage errors in the measurements of A, B, C, and D are 2%, 1%, 4%, and 3% respectively. What is the maximum percentage error in the calculated value of K?`, opts:['14.5%','18.5%','16.5%','15.5%']},
+        {id:44, sub:'Physics', type:'mcq', ans:'A', txt:String.raw`During an adiabatic process, the density of a gas is found to be proportional to cube of temperature. The degree of freedom of gas molecule is.....`, opts:['6','5','4','3']},
+        {id:45, sub:'Physics', type:'mcq', ans:'D', txt:String.raw`A particle moves along X-axis from x = 0 to x = 5 m under the influence of force given by $F=(7-2x+3x^{2})N$. The work done in the process is.....`, opts:['70 J','270 J','35 J','135 J']},
+        {id:46, sub:'Physics', type:'num', ans:2, txt:String.raw`A beam of unknown charged particles passes undeflected through a velocity selector where the electric field is $5\times10^{4}N/C$ and the magnetic field is 0.25 T. Both fields are uniform and mutually perpendicular, and also perpendicular to the particle's velocity. After exiting the selector, the particles enter a region containing only the same magnetic field (0.25 T) and follow a circular trajectory with a radius of 4 cm. Calculate the magnitude of the charge-to-mass ratio ($q/m$) for these particles in $C/kg$. Express your answer in the form $y\times10^{7}C/kg$, and provide the value of y.`},
+        {id:47, sub:'Physics', type:'num', ans:4, img:true, txt:String.raw`An electrical circuit is shown in fig. The potential difference across the resistor of 400 ohm, as it is measured by the voltmeter V of resistance 400 ohm is $5k/3$. Where k=`},
+        {id:48, sub:'Physics', type:'num', ans:180, txt:String.raw`A parallel plate capacitor of capacitance $20\mu F$ is being charged by a voltage source whose potential is changing at the rate of $3 Vs^{-1}$. The conduction current through the connecting wires, and the displacement current through the plates of the capacitor would be, respectively $N\mu A$ and $M\mu A$. Find value of $M+2N$.`},
+        {id:49, sub:'Physics', type:'num', ans:47, txt:String.raw`A long, slender pipe of uniform mass per unit length and total length L is filled with a light liquid and sealed. It is then rotated about one of its ends in a horizontal plane with a constant angular velocity $\omega$. The tension in the pipe at a point located at a distance $L/4$ from the pivot is $\frac{p}{q}\lambda\omega^{2}L^{2}$. The value of $p+q$ is (p & q are coprime)`},
+        {id:50, sub:'Physics', type:'num', ans:8, txt:String.raw`An infinitely long cylindrical wire of radius 'R' is carrying a current with current density $j=\alpha r^{3}$ (where $\alpha$ is constant and 'r' is the radial distance from the axis of the wire). If the magnetic field at $r=\frac{R}{2}$ is $B_{1}$ and at $r=2R$ is $B_{2}$ then the ratio $\frac{B_{2}}{B_{1}}$ is`},
+        // Chemistry
+        {id:51, sub:'Chemistry', type:'mcq', ans:'A', txt:String.raw`Match List -I with List-II.<br>List-I: (a) Lassaigne's test, (b) Cu (II) oxide, (c) Silver nitrate, (d) Sodium fusion extract with acetic acid and lead acetate.<br>List-II: (i) Carbon, (ii) Sulphur, (iii) N, S, P and halogen, (iv) Halogen specifically.<br>The correct match is:`, opts:['a-iii; b-i; c-iv; d-ii','a-i; b-ii; c-iv; d-iii','a-i; b-iv; c-iii; d-ii','a-iii; b-i; c-ii; d-iv']},
+        {id:52, sub:'Chemistry', type:'mcq', ans:'C', txt:String.raw`A gaseous compound is composed of 85.7% by mass of carbon and 14.3% by mass of hydrogen. Its density is $1.95 g L^{-1}$ at 350 K and 1.0 atm pressure. Calculate the molecular formula of the compound.`, opts:[String.raw`$C_{5}H_{10}$`,String.raw`$C_{6}H_{12}$`,String.raw`$C_{4}H_{8}$`,String.raw`$C_{8}H_{18}$`]},
+        {id:53, sub:'Chemistry', type:'mcq', ans:'A', txt:String.raw`Arrange the following nickel (II) complexes in ascending order of their Crystal Field Stabilization Energy (CFSE) values:<br>I. $[Ni(en)_{3}]^{2+}$<br>II. $[Ni(H_{2}O)_{6}]^{2+}$<br>III. $[NiCl_{4}]^{2-}$<br>IV. $[Ni(CN)_{4}]^{2-}$`, opts:['III < II < I < IV','II < III < I < IV','III < I < II < IV','I < II < III < IV']},
+        {id:54, sub:'Chemistry', type:'mcq', ans:'B', txt:String.raw`Assertion: Salts like KCl, $KNO_{3}$ i.e., inert electrolytes are used in salt bridge.<br>Reason: An inert electrolyte can easily be filled in the U-tube.`, opts:['Both assertion and reason are true and the reason is the correct explanation of the assertion.','Both assertion and reason are true but reason is not the correct explanation of the assertion.','Assertion is true but reason is false.','Both assertion and reason are false.']},
+        {id:55, sub:'Chemistry', type:'mcq', ans:'A', img:true, txt:String.raw`The Arrhenius plots of two reactions, I and II are shown graphically. The graph suggests that:`, opts:[String.raw`$E_{I}>E_{II}$ and $A_{I}>A_{II}$`,String.raw`$E_{II}>E_{I}$ and $A_{II}>A_{I}$`,String.raw`$E_{I}>E_{II}$ and $A_{II}>A_{I}$`,String.raw`$E_{II}>E_{I}$ and $A_{I}>A_{II}$`]},
+        {id:56, sub:'Chemistry', type:'mcq', ans:'B', img:true, txt:String.raw`What would be the product of the given reaction?`, opts:['A','B','C','D']},
+        {id:57, sub:'Chemistry', type:'mcq', ans:'A', txt:String.raw`The $Mn^{3+}$ ion is unstable in solution and undergoes disproportionation to give $Mn^{2+}$, $MnO_{2}$ and $H^{+}$ ion. Write a balanced ionic equation for the reaction and stoichiometric coefficients for $Mn^{3+}$, $MnO_{2}$ and $H^{+}$ may be:`, opts:['2, 1, 4','3, 2, 6','3, 2, 4','2, 1, 3']},
+        {id:58, sub:'Chemistry', type:'mcq', ans:'A', txt:String.raw`A hypothetical sparingly soluble compound, $Ga_{3}(PO_{4})_{5}$, dissociates in water to form $Ga^{5+}$ and $PO_{4}^{3-}$ ions. If 's' denotes the molar solubility of this compound, determine the correct relationship between 's' and its solubility product constant, $K_{sp}$.`, opts:[String.raw`$s = (\frac{K_{sp}}{84375})^{\frac{1}{8}}$`,String.raw`$s = (\frac{K_{sp}}{15625})^{\frac{1}{8}}$`,String.raw`$s = (\frac{K_{sp}}{27})^{\frac{1}{8}}$`,String.raw`$s = (\frac{K_{sp}}{46875})^{\frac{1}{8}}$`]},
+        {id:59, sub:'Chemistry', type:'mcq', ans:'A', txt:String.raw`Which of the given coordination compounds are classified as homoleptic and contain a central metal ion with an odd number of d electrons?<br>(P) $[Ti(H_{2}O)_{6}]^{3+}$<br>(Q) $[Fe(CN)_{6}]^{4-}$<br>(R) $[MnCl_{4}]^{2-}$<br>(S) $[Cr(NH_{3})_{5}Br]^{2+}$<br>(T) $[Ni(CO)_{4}]$`, opts:['(P) and (R) only','(Q) and (T) only','(P), (Q) and (S) only','(R) and (S) only']},
+        {id:60, sub:'Chemistry', type:'mcq', ans:'C', txt:String.raw`Which of the following thermodynamic identities is INCORRECT?`, opts:[String.raw`$dq_{P}=dH$`,String.raw`$dq_{V}=dU$`,String.raw`$(\frac{\partial G}{\partial P})_{T}=-V$`,String.raw`$C_{P}=(\frac{\partial H}{\partial T})_{P}$`]},
+        {id:61, sub:'Chemistry', type:'mcq', ans:'D', img:true, txt:String.raw`Starch consist of amylose and amylopectin. In structure of amylopectin:`, opts:['$\alpha$-1,4-glycosidic bonds','$\alpha$-1,6-glycosidic bonds','$\beta$-1,4-glycosidic bonds','$\alpha$-1,4-glycosidic bonds and $\alpha$-1,6-glycosidic bonds']},
+        {id:62, sub:'Chemistry', type:'mcq', ans:'B', txt:String.raw`For a hydrogen atom, which of the following sets of orbitals represents a degenerate group (i.e., all orbitals within the set have the same energy)?`, opts:['2s, 2px, 3s','3py, 3dxy, 3s','1s, 2s, 3s','4s, 4pz, 5dz2']},
+        {id:63, sub:'Chemistry', type:'mcq', ans:'D', img:true, txt:String.raw`The $1^{st}$, $2^{nd}$ and $3^{rd}$ ionization enthalpies $I_{1}$, $I_{2}$ and $I_{3}$, of four atoms with atomic numbers n, n+1, n+2 and n+3, where n < 10, are tabulated below.<br>n: 1579, 3374, 6043<br>n+1: 2075, 3952, 6125<br>n+2: 493, 4562, 6907<br>n+3: 739, 1451, 7731<br>What is the value of n?`, opts:['6','7','8','9']},
+        {id:64, sub:'Chemistry', type:'mcq', ans:'B', img:true, txt:String.raw`The structure of the starting material X is: (Reaction given in image)`, opts:['Structure A','Structure B','Structure C','Structure D']},
+        {id:65, sub:'Chemistry', type:'mcq', ans:'A', img:true, txt:String.raw`Major product B in the following reaction is:`, opts:['Structure A','Structure B','Structure C','Structure D']},
+        {id:66, sub:'Chemistry', type:'mcq', ans:'B', img:true, txt:String.raw`When the given compound is subjected to chlorination and Bromination, what are the major product, A and B respectively?`, opts:['A','B','C','D']},
+        {id:67, sub:'Chemistry', type:'mcq', ans:'B', img:true, txt:String.raw`Arrange the following carbocation in order of decreasing order of their stability.`, opts:['I > III > II > IV','IV > II > III > I','III > II > IV > I','IV > I > III > II']},
+        {id:68, sub:'Chemistry', type:'mcq', ans:'C', img:true, txt:String.raw`Match the following reactions (P, Q, R, S) with their characteristics (1, 2, 3, 4).`, opts:['P-4, Q-1, R-2, S-3','P-3, Q-4, R-2, S-1','P-3, Q-1, R-2, S-4','P-1, Q-2, R-4, S-3']},
+        {id:69, sub:'Chemistry', type:'mcq', ans:'C', txt:String.raw`How many of the following statement is incorrect when a mixture of NaCl and $K_{2}Cr_{2}O_{7}$ is gently warmed with conc. $H_{2}SO_{4}$?`, opts:['A deep red vapour is evolved','The vapours when passed into NaOH solution gives a yellow solution of $Na_{2}CrO_{4}$','Chlorine gas is evolved','Chromyl chloride is formed']},
+        {id:70, sub:'Chemistry', type:'mcq', ans:'C', txt:String.raw`Nitrogen and Phosphorus are both non-metallic elements in Group 15. While Phosphorus can form compounds like $PCl_{5}$ and $PCl_{6}^{-}$, Nitrogen's highest observed covalency is different. Additionally, the N-N single bond is significantly weaker than the P-P single bond. What is the maximum covalency of Nitrogen, and what is the primary reason for the weaker N-N bond compared to P-P?`, opts:['3; Larger atomic size of Nitrogen','4; High electronegativity of Nitrogen','4; Inter-electronic repulsion between lone pairs on adjacent Nitrogen atoms','5; Absence of d-orbitals in Nitrogen']},
+        {id:71, sub:'Chemistry', type:'num', ans:5, img:true, txt:String.raw`$C_2FClBrI \xrightarrow{H_2/Ni} X$ (All isomers).<br>$C_4H_8 (alkene) \xrightarrow{H_2/Ni} Y$ (All isomers).<br>Find value of X + Y.`},
+        {id:72, sub:'Chemistry', type:'num', ans:20, txt:String.raw`38 gm of mixture of $Li_{2}CO_{3}$ & $MgCO_{3}$ on strong heating showed a weight loss of 22 gm. Find the mole % of $MgCO_{3}$ in the given mixture (nearest integer).`},
+        {id:73, sub:'Chemistry', type:'num', ans:84, txt:String.raw`The standard enthalpy of combustion of $C_{2}H_{6}(g)$ is $-1564.25 kJ mol^{-1}$. Standard heat of formation of $CO_{2}(g)$ and $H_{2}O(l)$ are $-395 kJ mol^{-1}$ and $-286 kJ mol^{-1}$ respectively. The absolute value of heat liberated in $kJ mole^{-1}$ for the formation of 1 mole of $C_{2}H_{6}(g)$ from its constituent elements in standard state is (nearest integer).....`},
+        {id:74, sub:'Chemistry', type:'num', ans:3, txt:String.raw`Identify the number of molecules/ions from the list below that have a linear molecular structure: $SO_{2}, NO_{2}, O_{3}, ICl_{2}^{-}, SnCl_{2}, H_{2}S, CO_{2}, BeH_{2}$`},
+        {id:75, sub:'Chemistry', type:'num', ans:3, txt:String.raw`In the molecular structure of $Fe_{2}(CO)_{9}$ The difference between the number of triply bonded $C\equiv O$ units and doubly bonded $C=O$ units are/is how many.`}
+    ];
+
+    let currSub = 'Maths';
+    let currId = 1;
+    let responses = {}; 
+    let status = {};
+    let timer = 3*3600; 
+    let timerInt;
+    let userName = "User";
+    let visited = new Set();
+
+    function startTest() {
+        userName = document.getElementById('username').value || "User";
+        document.getElementById('header-name').innerText = userName;
+        document.getElementById('sidebar-name').innerText = userName;
+        document.getElementById('login-overlay').classList.add('hidden');
+        loadProgress();
+        setSub(currSub);
+        loadQ(currId);
+        timerInt = setInterval(() => {
+            timer--;
+            saveProgress();
+            if(timer <= 0) submitTest();
+            let h = Math.floor(timer/3600).toString().padStart(2,'0');
+            let m = Math.floor((timer%3600)/60).toString().padStart(2,'0');
+            let s = (timer%60).toString().padStart(2,'0');
+            document.getElementById('timer').innerText = `${h}:${m}:${s}`;
+            document.getElementById('mob-timer').innerText = `${h}:${m}:${s}`;
+        }, 1000);
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.querySelector('.overlay').classList.toggle('active');
+    }
+
+    function setSub(s) {
+        currSub = s;
+        document.getElementById('header-sub').innerText = s;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.innerText === s));
+        renderPalette();
+        const currentQ = db.find(x => x.id === currId);
+        if(currentQ.sub !== s) {
+            const first = db.find(x => x.sub === s);
+            if(first) loadQ(first.id);
+        }
+    }
+
+    function loadQ(id) {
+        // 1. Mark status
+        if(visited.has(currId) && !status[currId]) status[currId] = 'visited';
+        currId = id;
+        visited.add(id);
+        
+        // 2. Close mobile menus
+        document.getElementById('sidebar').classList.remove('active');
+        document.querySelector('.overlay').classList.remove('active');
+
+        // 3. Sync Subject
+        const q = db.find(x => x.id === id);
+        if(q.sub !== currSub) setSub(q.sub);
+        renderPalette();
+
+        // 4. Set Question Text
+        document.getElementById('q-num').innerText = q.id;
+        document.getElementById('q-text').innerHTML = q.txt;
+        
+        // --- FIXED IMAGE LOGIC ---
+        const img = document.getElementById('q-img');
+        const msg = document.getElementById('q-img-msg');
+        
+        // Reset: Hide everything initially
+        img.classList.add('hidden');
+        msg.classList.add('hidden');
+        img.style.display = 'none'; 
+        img.onerror = null; // Clear old error triggers
+
+        if(q.img) {
+            // Unhide the image element
+            img.classList.remove('hidden');
+            img.style.display = 'block';
+            
+            // Set the source to PNG
+            img.src = `q${q.id}.png`;
+            
+            // If PNG fails, try JPG
+            img.onerror = function() {
+                console.log(`q${q.id}.png failed, trying jpg...`);
+                this.src = `q${q.id}.jpg`;
+                
+                // If JPG also fails, show the error message text
+                this.onerror = function() {
+                    this.style.display = 'none';
+                    msg.classList.remove('hidden');
+                    msg.innerHTML = `⚠️ <b>q${q.id}.png</b> is missing from folder.`;
+                }
+            };
+        }
+        // -------------------------
+
+        // 5. Render Options
+        const optsDiv = document.getElementById('opts-container');
+        const numDiv = document.getElementById('num-container');
+        const numInp = document.getElementById('num-input');
+        
+        optsDiv.innerHTML = '';
+        numInp.value = '';
+
+        if(q.type === 'mcq') {
+            optsDiv.classList.remove('hidden');
+            numDiv.classList.add('hidden');
+            q.opts.forEach((o,i)=>{
+                const char = String.fromCharCode(65+i);
+                const div = document.createElement('div');
+                div.className = 'option-box';
+                const checked = (responses[q.id] === char) ? 'checked' : '';
+                if(checked) div.style.backgroundColor = "#e0eef7";
+                
+                div.innerHTML = `<input type="radio" name="opt" value="${char}" ${checked}> <b>(${char})</b> ${o}`;
+                div.onclick = () => { 
+                    div.querySelector('input').checked = true;
+                    document.querySelectorAll('.option-box').forEach(box => box.style.backgroundColor = '');
+                    div.style.backgroundColor = "#e0eef7";
+                };
+                optsDiv.appendChild(div);
+            });
+        } else {
+            optsDiv.classList.add('hidden');
+            numDiv.classList.remove('hidden');
+            if(responses[q.id]) numInp.value = responses[q.id];
+        }
+        if(window.MathJax) MathJax.typesetPromise();
+    }
+
+    function getResponse() {
+        const q = db.find(x => x.id === currId);
+        if(q.type === 'mcq') {
+            const el = document.querySelector('input[name="opt"]:checked');
+            return el ? el.value : null;
+        } else {
+            const el = document.getElementById('num-input');
+            return el.value.trim() !== '' ? el.value : null;
+        }
+    }
+
+    function saveNext() {
+        const val = getResponse();
+        if(val) { responses[currId] = val; status[currId] = 'ans'; }
+        else { status[currId] = 'not_ans'; }
+        nextQ();
+    }
+
+    function markReviewNext() {
+        const val = getResponse();
+        if(val) { responses[currId] = val; status[currId] = 'ans_review'; }
+        else { status[currId] = 'review'; }
+        nextQ();
+    }
+
+    function clearResp() {
+        delete responses[currId];
+        status[currId] = 'not_ans';
+        document.querySelectorAll('input[name="opt"]').forEach(x => x.checked = false);
+        document.querySelectorAll('.option-box').forEach(box => box.style.backgroundColor = '');
+        document.getElementById('num-input').value = '';
+    }
+
+    function nextQ() { if(currId < 75) loadQ(currId + 1); else renderPalette(); }
+    function prevQ() { if(currId > 1) loadQ(currId - 1); }
+
+    function renderPalette() {
+        const p = document.getElementById('palette-grid');
+        p.innerHTML = '';
+        let counts = {nv:0, na:0, ans:0, rev:0, ar:0};
+        
+        db.forEach(q => {
+            let s = status[q.id];
+            if(!s) { if(visited.has(q.id)) counts.na++; else counts.nv++; }
+            else if(s === 'ans') counts.ans++;
+            else if(s === 'not_ans') counts.na++;
+            else if(s === 'review') counts.rev++;
+            else if(s === 'ans_review') counts.ar++;
+            else if(s === 'visited') counts.na++;
+        });
+
+        // Update Buttons
+        const qs = db.filter(x => x.sub === currSub);
+        qs.forEach(q => {
+            const btn = document.createElement('button');
+            btn.innerText = q.id;
+            let s = status[q.id];
+            let cls = 'not-visited';
+            if(!s && visited.has(q.id)) cls = 'not-ans';
+            else if(s === 'ans') cls = 'ans';
+            else if(s === 'not_ans') cls = 'not-ans';
+            else if(s === 'review') cls = 'review';
+            else if(s === 'ans_review') cls = 'ans-review';
+            else if(s === 'visited') cls = 'not-ans';
+            btn.className = `pal-btn ${cls}`;
+            if(q.id === currId) btn.classList.add('current');
+            btn.onclick = () => loadQ(q.id);
+            p.appendChild(btn);
+        });
+
+        document.getElementById('count-nv').innerText = counts.nv;
+        document.getElementById('count-na').innerText = counts.na;
+        document.getElementById('count-ans').innerText = counts.ans;
+        document.getElementById('count-rev').innerText = counts.rev;
+        document.getElementById('count-ans-rev').innerText = counts.ar;
+    }
+
+    // Tools
+    let zoomLvl = 1;
+    function toggleZoom() {
+        const el = document.getElementById('zoom-container');
+        if(zoomLvl === 1) { el.classList.add('zoom-125'); zoomLvl = 1.25; }
+        else if(zoomLvl === 1.25) { el.classList.remove('zoom-125'); el.classList.add('zoom-150'); zoomLvl = 1.5; }
+        else { el.classList.remove('zoom-150'); zoomLvl = 1; }
+    }
+    function changeTheme() { document.body.classList.toggle('dark-mode'); }
+    let fontSize = 16;
+    function resizeFont(delta) { fontSize += delta; document.body.style.setProperty('--font-size', fontSize + 'px'); }
+    function toggleCursor() {
+        const dot = document.getElementById('cursor-dot');
+        if(dot.style.display === 'block') { dot.style.display = 'none'; document.removeEventListener('mousemove', moveCursor); }
+        else { dot.style.display = 'block'; document.addEventListener('mousemove', moveCursor); }
+    }
+    function moveCursor(e) { const dot = document.getElementById('cursor-dot'); dot.style.left = e.pageX + 'px'; dot.style.top = e.pageY + 'px'; }
+
+    // Storage
+    function saveProgress() {
+        const data = { responses, status, visited: Array.from(visited), timer, currId, currSub, userName };
+        localStorage.setItem('jee_nta_v2', JSON.stringify(data));
+    }
+    function loadProgress() {
+        const saved = localStorage.getItem('jee_nta_v2');
+        if(saved) {
+            const data = JSON.parse(saved);
+            responses = data.responses || {}; status = data.status || {}; visited = new Set(data.visited || []);
+            timer = data.timer || 3*3600; currId = data.currId || 1; currSub = data.currSub || 'Maths'; userName = data.userName || "User";
+        }
+    }
+
+    // --- SUBMIT & RESULT GENERATION ---
+    function submitTest() {
+        if(!confirm("Are you sure you want to submit?")) return;
+        
+        clearInterval(timerInt);
+        localStorage.removeItem('jee_nta_v2');
+        
+        // Calculate Score
+        let score=0, corr=0, wrong=0, att=0;
+        let rows = "";
+
+        db.forEach(q => {
+            const userVal = responses[q.id];
+            let rowClass = "status-skip";
+            let statusText = "Skipped";
+            let userDisplay = userVal || "-";
+            
+            if(userVal) {
+                att++;
+                let isCorrect = false;
+                if(q.type === 'mcq') isCorrect = (userVal === q.ans);
+                else isCorrect = (Math.abs(parseFloat(userVal) - parseFloat(q.ans)) < 0.1);
+                
+                if(isCorrect) { score += 4; corr++; rowClass = "status-correct"; statusText = "Correct"; }
+                else { score -= 1; wrong++; rowClass = "status-wrong"; statusText = "Wrong"; }
+            }
+
+            rows += `<tr>
+                <td>${q.id}</td>
+                <td>${q.sub}</td>
+                <td>${q.type.toUpperCase()}</td>
+                <td>${userDisplay}</td>
+                <td>${q.ans}</td>
+                <td class="${rowClass}">${statusText}</td>
+            </tr>`;
+        });
+
+        // Update Result DOM
+        document.getElementById('res-name').innerText = userName;
+        document.getElementById('res-date').innerText = new Date().toLocaleString();
+        document.getElementById('res-score').innerText = `${score}/300`;
+        document.getElementById('res-corr').innerText = corr;
+        document.getElementById('res-wrong').innerText = wrong;
+        document.getElementById('res-att').innerText = att;
+        document.getElementById('analysis-body').innerHTML = rows;
+
+        // Switch Screens
+        document.getElementById('test-interface').classList.add('hidden');
+        document.querySelector('.header-top').classList.add('hidden');
+        document.querySelector('.sub-header').classList.add('hidden');
+        document.getElementById('result-page').style.display = 'block';
+        
+        // Allow scrolling for result page
+        document.body.style.overflow = "auto";
+        document.body.style.height = "auto";
+    }
+
+</script>
+</body>
+</html>
