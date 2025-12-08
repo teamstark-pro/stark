@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Ayush</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+
+<body>
+    <div class="bg-fixed"></div>
+    <div class="overlay"></div>
+
+    <nav class="navbar glass-panel"
+        style="position: relative; top: 0; left: 0; transform: none; width: 100%; border-radius: 0; margin-bottom: 40px;">
+        <div class="logo neon-text">ADMIN PANEL</div>
+        <button onclick="logout()" class="glass-button">Logout</button>
+    </nav>
+
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <!-- Create Post -->
+            <div class="glass-panel p-4" style="padding: 30px;">
+                <h2 class="neon-text-blue mb-4">Create New Blog</h2>
+                <form id="create-blog-form">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px;">Title</label>
+                        <input type="text" id="blog-title" class="glass-input"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px;"
+                            required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px;">Content</label>
+                        <textarea id="blog-content" rows="6" class="glass-input"
+                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px;"
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="glass-button glowing" style="width: 100%;">Publish</button>
+                </form>
+            </div>
+
+            <!-- Manage Posts -->
+            <div class="glass-panel p-4" style="padding: 30px;">
+                <h2 class="neon-text-blue mb-4">Manage Posts</h2>
+                <div id="admin-blogs-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/blog-manager.js"></script>
+    <script>
+        // Check Auth
+        checkAuth();
+
+        // Render Blogs
+        renderAdminBlogs('admin-blogs-list');
+
+        // Handle Submit
+        document.getElementById('create-blog-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('blog-title').value;
+            const content = document.getElementById('blog-content').value;
+
+            if (saveBlog({ title, content })) {
+                alert('Blog Published!');
+                document.getElementById('create-blog-form').reset();
+                renderAdminBlogs('admin-blogs-list');
+            }
+        });
+
+        // Handle Delete (Global wrapper)
+        window.handleDelete = function (id) {
+            if (confirm('Are you sure?')) {
+                deleteBlog(id);
+                renderAdminBlogs('admin-blogs-list');
+            }
+        }
+    </script>
+</body>
+
+</html>

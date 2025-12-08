@@ -1,0 +1,71 @@
+<nav class="navbar glass-panel">
+    <div class="logo neon-text">AYUSH</div>
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="bots.html">Bots</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html" style="color: var(--primary-color);"><i class="fas fa-user"></i></a></li>
+    </ul>
+    <button id="theme-toggle" class="glass-button icon-btn"><i class="fas fa-moon"></i></button>
+</nav>
+
+<style>
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 1200px;
+        z-index: 1000;
+        border-radius: 50px;
+    }
+
+    .logo {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 30px;
+    }
+
+    .nav-links a {
+        font-weight: 500;
+        position: relative;
+    }
+
+    .nav-links a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: var(--secondary-color);
+        transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after {
+        width: 100%;
+    }
+
+    .icon-btn {
+        padding: 10px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

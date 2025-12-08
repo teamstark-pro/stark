@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogs | Ayush</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body>
+    <div class="bg-fixed"></div>
+    <div class="overlay"></div>
+    <div id="navbar-container"></div>
+
+    <section class="container" style="padding-top: 150px;">
+        <h1 class="neon-text fade-in-up" style="text-align: center; margin-bottom: 50px;">My Thoughts & Updates</h1>
+
+        <div id="blogs-container" style="display: grid; gap: 30px; max-width: 800px; margin: 0 auto;">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <script src="assets/js/blog-manager.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/navbar.js"></script>
+    <script>
+        // Load Blogs
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBlogs('blogs-container');
+        });
+    </script>
+</body>
+
+</html>

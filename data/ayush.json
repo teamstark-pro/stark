@@ -1,0 +1,25 @@
+{
+  "name": "Ayush",
+  "age": 18,
+  "level": "Student | Tech Lover | JEE + Boards Warrior",
+  "hobbies": [
+    "Coding",
+    "Space stuff",
+    "Creating bots",
+    "Experimenting with AI",
+    "Music"
+  ],
+  "vibe": "Fast learner, quick thinker, creative mind",
+  "goal": "Become a top-tier software developer & engineer",
+  "funFacts": [
+    "Sometimes forgets names, birthdays, and even specs 💀",
+    "Loves exploring random topics",
+    "Has a savage competitive 'me vs me' mindset",
+    "Learns fast with minimal effort",
+    "Made multiple Telegram bots"
+  ],
+  "socials": {
+    "spotify": "https://open.spotify.com/user/314rym7xe3pg6bct2d3g5eibxbhm",
+    "telegram": "https://t.me/random_thoughtx"
+  }
+}

@@ -1,0 +1,28 @@
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem !important;
+    }
+
+    h2 {
+        font-size: 2rem !important;
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+
+    .navbar .nav-links {
+        display: none;
+        /* Mobile menu to be implemented */
+    }
+
+    /* Mobile Menu Styles would go here if implementing a hamburger menu */
+
+    .bot-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .hero-content {
+        text-align: center;
+    }
+}

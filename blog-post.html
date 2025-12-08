@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post | Ayush</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body>
+    <div class="bg-fixed"></div>
+    <div class="overlay"></div>
+    <div id="navbar-container"></div>
+
+    <section class="container" style="padding-top: 150px;">
+        <div id="single-blog-container" class="glass-panel p-5 fade-in-up">
+            <!-- Populated by JS -->
+            <div style="text-align: center;">
+                <h1 class="neon-text mb-4">Loading...</h1>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="blogs.html" class="glass-button"><i class="fas fa-arrow-left"></i> Back to Blogs</a>
+        </div>
+    </section>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/navbar.js"></script>
+    <script src="assets/js/blog-manager.js"></script>
+    <script>
+        // Load the specific blog when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSingleBlog();
+        });
+    </script>
+</body>
+
+</html>

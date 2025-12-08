@@ -1,0 +1,33 @@
+[
+  {
+    "name": "SpotifyX Musix Bot",
+    "username": "@spotifyxmusixbot",
+    "features": [
+      "Download music from YouTube",
+      "Download videos in different qualities",
+      "AI Image Generation",
+      "Fully ad-free",
+      "Unlimited usage"
+    ],
+    "icon": "🎵"
+  },
+  {
+    "name": "Uncensored NSFW Bot",
+    "username": "@UncensoredNSFWbot",
+    "features": [
+      "Unrestricted AI image generation",
+      "No filters, no limits"
+    ],
+    "icon": "🔞"
+  },
+  {
+    "name": "AyushX Chat Robot",
+    "username": "@ayushxchat_robot",
+    "features": [
+      "Contact Ayush",
+      "Quick communication",
+      "Simple & fast"
+    ],
+    "icon": "🤖"
+  }
+]

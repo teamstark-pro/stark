@@ -1,0 +1,63 @@
+/* Animations */
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+.floating {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px var(--primary-color); }
+    50% { box-shadow: 0 0 20px var(--primary-color), 0 0 10px var(--secondary-color); }
+    100% { box-shadow: 0 0 5px var(--primary-color); }
+}
+
+.glowing {
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    opacity: 0; /* Hidden initially */
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Scroll Reveal Class */
+.reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Particle Effects (Simple CSS implementation, can be enhanced with JS) */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.3;
+    pointer-events: none;
+}
