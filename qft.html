@@ -21,6 +21,66 @@
       gtag('js', new Date());
       gtag('config', 'G-CBVSGE70LX');
     </script>
+
+    <style>
+        .modal-overlay {
+            display: none; 
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 30, 0.9);
+            border: 1px solid rgba(0, 136, 204, 0.5);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 136, 204, 0.2);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .access-input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 5px;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .access-input:focus {
+            border-color: #0088cc;
+        }
+
+        .modal-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-unlock { background: #0088cc; color: white; }
+        .btn-unlock:hover { background: #006699; box-shadow: 0 0 15px #0088cc; }
+
+        .btn-close { background: transparent; color: #aaa; margin-top: 10px; }
+        .btn-close:hover { color: white; }
+        
+        #error-msg { color: #ff4d4d; font-size: 0.9rem; display: none; margin-top: 10px; }
+    </style>
 </head>
 
 <body>
@@ -28,6 +88,21 @@
     <div class="overlay"></div>
 
     <div id="navbar-container"></div>
+
+    <div id="accessModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="neon-text-blue" style="font-size: 1.8rem;">Premium Content</h2>
+            <p style="color: rgba(255,255,255,0.7); margin-top: 10px;">Enter your access code to unlock this mock test.</p>
+            
+            <input type="password" id="accessCodeInput" class="access-input" placeholder="Enter Access Code">
+            
+            <button onclick="verifyCode()" class="modal-btn btn-unlock">UNLOCK TEST</button>
+            <br>
+            <button onclick="closeModal()" class="modal-btn btn-close">Cancel</button>
+            
+            <p id="error-msg">Invalid Access Code!</p>
+        </div>
+    </div>
 
     <section style="padding: 120px 20px 60px;">
         <div class="container">
@@ -56,9 +131,9 @@
 
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                         
-                        <a href="https://teamstark-pro.github.io/stark/mathongo/test.html" target="_blank" class="glass-button" 
+                        <a href="javascript:void(0)" onclick="openModal('test.html')" class="glass-button" 
                            style="flex: 1; text-align: center; white-space: nowrap; background: rgba(0, 136, 204, 0.1); border-color: #0088cc;">
-                            <i class="fas fa-laptop"></i> Attempt CBT
+                            <i class="fas fa-lock"></i> Attempt CBT
                         </a>
 
                         <a href="https://t.me/starkXmathongo" target="_blank" class="glass-button" 
@@ -68,11 +143,68 @@
 
                     </div>
                 </div>
+
+                <div class="glass-panel fade-in-up" style="padding: 30px; border: 1px solid rgba(0, 136, 204, 0.2); animation-delay: 0.1s;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <h2 style="color: #fff; font-size: 1.8rem; margin: 0;">QFT 2</h2>
+                        <span style="background: rgba(255, 215, 0, 0.2); color: #FFD700; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PREMIUM</span>
+                    </div>
+
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5;">
+                        Advanced level mock test for paid members.
+                        <br><span style="font-size: 0.9rem; color: rgba(255,255,255,0.4);">Duration: 3 Hours</span>
+                    </p>
+
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        
+                        <a href="javascript:void(0)" onclick="openModal('qft2_paid_member.html')" class="glass-button" 
+                           style="flex: 1; text-align: center; white-space: nowrap; background: rgba(0, 136, 204, 0.1); border-color: #FFD700; color: #FFD700;">
+                            <i class="fas fa-lock"></i> Attempt CBT
+                        </a>
+
+                        <a href="https://t.me/starkXmathongo" target="_blank" class="glass-button" 
+                           style="flex: 1; text-align: center; white-space: nowrap; background: rgba(40, 167, 69, 0.1); border-color: #28a745;">
+                            <i class="fab fa-telegram-plane"></i> Get PDF
+                        </a>
+
+                    </div>
                 </div>
+
+            </div>
         </div>
     </section>
 
     <script src="assets/js/navbar.js"></script>
     <script src="assets/js/main.js"></script>
+
+    <script>
+        // === SET YOUR ACCESS CODES HERE ===
+        const validCodes = ["STARK2025", "JEE99", "MOCK1"]; 
+        
+        let targetUrl = ""; 
+
+        function openModal(url) {
+            targetUrl = url; 
+            document.getElementById('accessModal').style.display = 'flex';
+            document.getElementById('accessCodeInput').value = ''; 
+            document.getElementById('error-msg').style.display = 'none';
+        }
+
+        function closeModal() {
+            document.getElementById('accessModal').style.display = 'none';
+        }
+
+        function verifyCode() {
+            const userCode = document.getElementById('accessCodeInput').value;
+            
+            if(validCodes.includes(userCode)) {
+                window.open(targetUrl, "_blank");
+                closeModal();
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
