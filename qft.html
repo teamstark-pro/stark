@@ -101,6 +101,10 @@
             <button onclick="closeModal()" class="modal-btn btn-close">Cancel</button>
             
             <p id="error-msg">Invalid Access Code!</p>
+            
+            <p style="margin-top: 20px; font-size: 0.8rem; color: #aaa;">
+                Don't have a code? <a href="https://t.me/team_stark_bot" target="_blank" style="color: #0088cc;">Buy here</a>
+            </p>
         </div>
     </div>
 
@@ -111,63 +115,65 @@
                 <i class="fas fa-arrow-left"></i> Back to Mathongo
             </a>
 
-            <h1 class="neon-text-blue" style="font-size: 2.5rem; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+            <h1 class="neon-text-blue" style="font-size: 2.5rem; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
                 QFT Series List
             </h1>
 
+            <div class="glass-panel fade-in-up" style="margin-bottom: 40px; padding: 25px; border-left: 4px solid #FFD700; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="color: #fff; margin-bottom: 5px; font-size: 1.3rem;">
+                        <i class="fas fa-crown" style="color: #FFD700; margin-right: 10px;"></i> Unlock Premium Tests
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.7); margin: 0; line-height: 1.4;">
+                        Get your unique access code instantly to attempt locked CBT tests.
+                    </p>
+                </div>
+                <a href="https://t.me/team_stark_bot" target="_blank" class="glass-button" 
+                   style="background: rgba(255, 215, 0, 0.1); border-color: #FFD700; color: #FFD700; font-weight: bold; white-space: nowrap;">
+                    <i class="fab fa-telegram-plane"></i> Buy Access via Bot
+                </a>
+            </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
 
                 <div class="glass-panel fade-in-up" style="padding: 30px; border: 1px solid rgba(0, 136, 204, 0.2);">
-                    
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                         <h2 style="color: #fff; font-size: 1.8rem; margin: 0;">QFT 1</h2>
                         <span style="background: rgba(0, 136, 204, 0.2); color: #0088cc; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">FULL SYLLABUS</span>
                     </div>
-
                     <p style="color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5;">
                         Complete syllabus mock test based on latest pattern. 
                         <br><span style="font-size: 0.9rem; color: rgba(255,255,255,0.4);">Duration: 3 Hours</span>
                     </p>
-
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        
                         <a href="javascript:void(0)" onclick="openModal('test.html')" class="glass-button" 
                            style="flex: 1; text-align: center; white-space: nowrap; background: rgba(0, 136, 204, 0.1); border-color: #0088cc;">
                             <i class="fas fa-lock"></i> Attempt CBT
                         </a>
-
                         <a href="https://t.me/starkXmathongo" target="_blank" class="glass-button" 
                            style="flex: 1; text-align: center; white-space: nowrap; background: rgba(40, 167, 69, 0.1); border-color: #28a745;">
                             <i class="fab fa-telegram-plane"></i> Get PDF
                         </a>
-
                     </div>
                 </div>
 
                 <div class="glass-panel fade-in-up" style="padding: 30px; border: 1px solid rgba(0, 136, 204, 0.2); animation-delay: 0.1s;">
-                    
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                         <h2 style="color: #fff; font-size: 1.8rem; margin: 0;">QFT 2</h2>
                         <span style="background: rgba(255, 215, 0, 0.2); color: #FFD700; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PREMIUM</span>
                     </div>
-
                     <p style="color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5;">
                         Advanced level mock test for paid members.
                         <br><span style="font-size: 0.9rem; color: rgba(255,255,255,0.4);">Duration: 3 Hours</span>
                     </p>
-
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        
                         <a href="javascript:void(0)" onclick="openModal('qft2_paid_member.html')" class="glass-button" 
                            style="flex: 1; text-align: center; white-space: nowrap; background: rgba(0, 136, 204, 0.1); border-color: #FFD700; color: #FFD700;">
                             <i class="fas fa-lock"></i> Attempt CBT
                         </a>
-
                         <a href="https://t.me/starkXmathongo" target="_blank" class="glass-button" 
                            style="flex: 1; text-align: center; white-space: nowrap; background: rgba(40, 167, 69, 0.1); border-color: #28a745;">
                             <i class="fab fa-telegram-plane"></i> Get PDF
                         </a>
-
                     </div>
                 </div>
 
@@ -180,7 +186,7 @@
 
     <script>
         // === SET YOUR ACCESS CODES HERE ===
-        const validCodes = ["STARK2025", "JEE99", "MOCK1"]; 
+        const validCodes = ["STARKTEAML2025", "STARKKAKAJEE", "MATHONGOKOLOOTLO"]; 
         
         let targetUrl = ""; 
 
