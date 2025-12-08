@@ -185,32 +185,36 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        // === SET YOUR ACCESS CODES HERE ===
-        const validCodes = ["STARKTEAML2025", "STARKKAKAJEE", "MATHONGOKOLOOTLO"]; 
+    // === SET YOUR ACCESS CODES HERE ===
+    const validCodes = ["STARK2025", "JEE99", "MOCK1"]; 
+    
+    let targetUrl = ""; 
+
+    function openModal(url) {
+        targetUrl = url; 
+        document.getElementById('accessModal').style.display = 'flex';
+        document.getElementById('accessCodeInput').value = ''; 
+        document.getElementById('error-msg').style.display = 'none';
+    }
+
+    function closeModal() {
+        document.getElementById('accessModal').style.display = 'none';
+    }
+
+    function verifyCode() {
+        const userCode = document.getElementById('accessCodeInput').value;
         
-        let targetUrl = ""; 
+        if(validCodes.includes(userCode)) {
+            // 1. SAVE THE TOKEN (This is the key!)
+            sessionStorage.setItem("stark_premium_access", "GRANTED");
 
-        function openModal(url) {
-            targetUrl = url; 
-            document.getElementById('accessModal').style.display = 'flex';
-            document.getElementById('accessCodeInput').value = ''; 
-            document.getElementById('error-msg').style.display = 'none';
+            // 2. Open the test
+            window.open(targetUrl, "_blank");
+            closeModal();
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
         }
-
-        function closeModal() {
-            document.getElementById('accessModal').style.display = 'none';
-        }
-
-        function verifyCode() {
-            const userCode = document.getElementById('accessCodeInput').value;
-            
-            if(validCodes.includes(userCode)) {
-                window.open(targetUrl, "_blank");
-                closeModal();
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
